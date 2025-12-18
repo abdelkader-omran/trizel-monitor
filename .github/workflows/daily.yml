@@ -15,10 +15,12 @@ concurrency:
 jobs:
   monitor:
     runs-on: ubuntu-latest
-    - name: Checkout repository (full history)
-  uses: actions/checkout@v4
-  with:
-    fetch-depth: 0
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -30,7 +32,7 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Run scientific acquisition (src/main.py)
+      - name: Run scientific acquisition
         run: |
           python src/main.py
 
@@ -38,12 +40,11 @@ jobs:
         run: |
           date -u +"%Y-%m-%dT%H:%M:%SZ" > last_run_utc.txt
 
-      - name: Commit outputs safely (rebase then push)
+      - name: Commit outputs safely
         run: |
           git config user.name "auto-dz-act-bot"
           git config user.email "actions@github.com"
 
-          # Sync with remote to avoid "fetch first" rejection
           git pull --rebase origin main
 
           git add -A
