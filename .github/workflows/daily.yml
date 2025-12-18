@@ -14,8 +14,6 @@ concurrency:
 
 jobs:
   monitor:
-    # يمنع أي تشغيل سببه push (حتى لا تدخل في حلقة commits)
-    if: github.event_name != 'push'
     runs-on: ubuntu-latest
 
     steps:
@@ -23,12 +21,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Sync with remote (before generating files)
-        run: |
-          git config user.name "auto-dz-act-bot"
-          git config user.email "actions@github.com"
-          git pull --rebase origin main
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -39,6 +31,13 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      # مهم: اجلب آخر نسخة من main قبل توليد أي ملفات
+      - name: Sync with remote main (before generating outputs)
+        run: |
+          git config user.name "auto-dz-act-bot"
+          git config user.email "actions@github.com"
+          git pull --rebase origin main
 
       - name: Run scientific acquisition (src/main.py)
         run: |
@@ -51,12 +50,5 @@ jobs:
       - name: Commit and push outputs
         run: |
           git add -A
-
-          # إذا لم تتغير أي ملفات، لا تعمل commit ولا تفشل المهمة
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
-            exit 0
-          fi
-
-          git commit -m "Daily scientific data update (automated)"
+          git commit -m "Daily scientific data update (automated)" || echo "No changes to commit"
           git push origin HEAD:main
