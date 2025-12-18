@@ -5,7 +5,7 @@ on:
   schedule:
     - cron: "15 2 * * *"   # daily at 02:15 UTC
   push:
-    branches: [ "main" ]
+    branches: ["main"]
     paths-ignore:
       - "data/**"
       - "last_run_utc.txt"
@@ -53,18 +53,13 @@ jobs:
           git config user.name "auto-dz-act-bot"
           git config user.email "actions@github.com"
 
-          # Stage everything first
           git add -A
 
-          # If nothing changed, exit cleanly
           if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
           fi
 
-          # Sync with remote safely
           git pull --rebase origin main
-
-          # Commit and push
           git commit -m "Daily scientific data update (automated)"
           git push origin HEAD:main
