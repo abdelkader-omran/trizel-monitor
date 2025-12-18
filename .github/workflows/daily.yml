@@ -3,7 +3,12 @@ name: Daily Official Data Monitor
 on:
   workflow_dispatch:
   schedule:
-    - cron: "15 2 * * *" # daily at 02:15 UTC
+    - cron: "15 2 * * *"   # daily at 02:15 UTC
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+      - "data/**"
+      - "last_run_utc.txt"
 
 permissions:
   contents: write
@@ -32,14 +37,7 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      # مهم: اجلب آخر نسخة من main قبل توليد أي ملفات
-      - name: Sync with remote main (before generating outputs)
-        run: |
-          git config user.name "auto-dz-act-bot"
-          git config user.email "actions@github.com"
-          git pull --rebase origin main
-
-      - name: Run scientific acquisition (src/main.py)
+      - name: Run scientific acquisition
         run: |
           python src/main.py
 
@@ -47,8 +45,26 @@ jobs:
         run: |
           date -u +"%Y-%m-%dT%H:%M:%SZ" > last_run_utc.txt
 
-      - name: Commit and push outputs
+      - name: Commit outputs safely
+        shell: bash
         run: |
+          set -e
+
+          git config user.name "auto-dz-act-bot"
+          git config user.email "actions@github.com"
+
+          # Stage everything first
           git add -A
-          git commit -m "Daily scientific data update (automated)" || echo "No changes to commit"
+
+          # If nothing changed, exit cleanly
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          # Sync with remote safely
+          git pull --rebase origin main
+
+          # Commit and push
+          git commit -m "Daily scientific data update (automated)"
           git push origin HEAD:main
