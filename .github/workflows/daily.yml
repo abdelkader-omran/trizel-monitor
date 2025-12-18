@@ -37,10 +37,15 @@ jobs:
         run: |
           date -u +"%Y-%m-%dT%H:%M:%SZ" > last_run_utc.txt
 
-      - name: Commit outputs
-        run: |
-          git config user.name "auto-dz-act-bot"
-          git config user.email "actions@github.com"
-          git add -A
-          git commit -m "Daily scientific data update (automated)" || true
-          git push
+      - - name: Commit outputs
+  run: |
+    git config user.name "auto-dz-act-bot"
+    git config user.email "actions@github.com"
+
+    git fetch origin main
+    git pull --rebase origin main
+
+    git add -A
+    git commit -m "Daily scientific data update (automated)" || true
+
+    git push origin main
