@@ -1,46 +1,87 @@
 import os
 import json
+import requests
 from datetime import datetime
 
-# Function to fetch data from NASA / JPL SBDB (mock implementation; replace with actual logic)
-def fetch_data_from_nasa():
-    # Replace this mock data fetching with actual API calls and logic.
-    return {
-        "object": "ExampleObject",
-        "data": {
-            "property1": "value1",
-            "property2": "value2"
-        }
+
+# =========================
+# Configuration
+# =========================
+
+DATA_DIR = "data"
+SBDB_API_URL = "https://ssd-api.jpl.nasa.gov/sbdb.api"
+
+# الجسم الافتراضي (يمكن تغييره لاحقًا)
+TARGET_OBJECT = "1I/ʻOumuamua"
+
+
+# =========================
+# Data Acquisition
+# =========================
+
+def fetch_data_from_nasa_sbdb(object_name: str) -> dict:
+    """
+    Fetch real data from NASA / JPL Small-Body Database (SBDB)
+    """
+    params = {
+        "sstr": object_name,
+        "phys-par": "1",
+        "orb": "1"
     }
 
-# Ensure the 'data/' directory exists
-data_directory = "data/"
-if not os.path.exists(data_directory):
-    os.makedirs(data_directory)
+    response = requests.get(SBDB_API_URL, params=params, timeout=30)
+    response.raise_for_status()
 
-# Fetch the data
-data_fetched = fetch_data_from_nasa()
+    return response.json()
 
-# Add metadata fields
-retrieved_timestamp = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
-metadata = {
-    "source": "NASA / JPL SBDB",
-    "object": data_fetched.get("object"),
-    "retrieved_utc": retrieved_timestamp
-}
 
-data_with_metadata = {**data_fetched, **metadata}
+# =========================
+# Main Execution
+# =========================
 
-# Save the data in the two specified files
-utc_timestamp = datetime.utcnow().strftime('%Y%m%d_%H%M%S')
-file_name_timestamped = os.path.join(data_directory, f"jpl_sbdb_{utc_timestamp}.json")
-file_name_latest = os.path.join(data_directory, "latest_jpl_sbdb.json")
+def main():
+    # Ensure data directory exists
+    os.makedirs(DATA_DIR, exist_ok=True)
 
-# Write the data with metadata to both files
-with open(file_name_timestamped, "w") as file:
-    json.dump(data_with_metadata, file, indent=4)
+    # Fetch data from NASA / JPL
+    nasa_data = fetch_data_from_nasa_sbdb(TARGET_OBJECT)
 
-with open(file_name_latest, "w") as file:
-    json.dump(data_with_metadata, file, indent=4)
+    # UTC timestamps
+    retrieved_utc = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+    file_timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
 
-print(f"Data saved to: {file_name_timestamped} and {file_name_latest}")
+    # Metadata layer (Auto Dz Act compatible)
+    metadata = {
+        "source": "NASA / JPL SBDB",
+        "object_designation": TARGET_OBJECT,
+        "retrieved_utc": retrieved_utc
+    }
+
+    # Merge raw data + metadata
+    data_with_metadata = {
+        "metadata": metadata,
+        "sbdb_data": nasa_data
+    }
+
+    # Output files
+    file_timestamped = os.path.join(
+        DATA_DIR, f"sbdb_{TARGET_OBJECT.replace('/', '_')}_{file_timestamp}.json"
+    )
+    file_latest = os.path.join(
+        DATA_DIR, "sbdb_latest.json"
+    )
+
+    # Write files
+    with open(file_timestamped, "w", encoding="utf-8") as f:
+        json.dump(data_with_metadata, f, indent=2, ensure_ascii=False)
+
+    with open(file_latest, "w", encoding="utf-8") as f:
+        json.dump(data_with_metadata, f, indent=2, ensure_ascii=False)
+
+    print(f"[OK] NASA SBDB data saved:")
+    print(f" - {file_timestamped}")
+    print(f" - {file_latest}")
+
+
+if __name__ == "__main__":
+    main()
