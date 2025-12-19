@@ -29,16 +29,32 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Run scientific acquisition
+        id: acquire
+        continue-on-error: true
+        shell: bash
         run: |
           python src/main.py
+          code=$?
+          echo "TRIZEL_EXIT_CODE=$code" >> "$GITHUB_ENV"
+          echo "TRIZEL_EXIT_CODE=$code"
+
+      - name: Enforce exit-code contract
+        shell: bash
+        run: |
+          echo "TRIZEL_EXIT_CODE=${TRIZEL_EXIT_CODE}"
+          if [ "${TRIZEL_EXIT_CODE}" -eq 0 ] || [ "${TRIZEL_EXIT_CODE}" -eq 2 ]; then
+            exit 0
+          else
+            exit "${TRIZEL_EXIT_CODE}"
+          fi
 
       - name: Commit outputs (safe)
+        if: ${{ env.TRIZEL_EXIT_CODE == '0' || env.TRIZEL_EXIT_CODE == '2' }}
         run: |
           git config user.name "auto-dz-act-bot"
           git config user.email "actions@github.com"
 
           git add -A
-
           if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
