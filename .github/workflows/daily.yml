@@ -33,9 +33,11 @@ jobs:
         continue-on-error: true
         shell: bash
         run: |
+          set +e
           python src/main.py
           code=$?
           echo "TRIZEL_EXIT_CODE=$code" >> "$GITHUB_ENV"
+          exit 0
 
       - name: Enforce exit-code contract
         shell: bash
@@ -49,6 +51,7 @@ jobs:
 
       - name: Commit outputs (safe)
         if: ${{ env.TRIZEL_EXIT_CODE == '0' || env.TRIZEL_EXIT_CODE == '2' }}
+        shell: bash
         run: |
           git config user.name "auto-dz-act-bot"
           git config user.email "actions@github.com"
@@ -59,4 +62,7 @@ jobs:
           fi
 
           git commit -m "Automated data update"
-          git push origin HEAD:refs/heads/auto/data-updates
+
+          # Avoid non-fast-forward failures if main advanced since checkout
+          git pull --rebase origin main
+          git push origin HEAD:main
