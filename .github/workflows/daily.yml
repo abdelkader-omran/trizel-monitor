@@ -1,27 +1,62 @@
-MODE: MANUAL (GitHub Web UI)
-TOOL: GitHub Repository Editor (NOT Copilot)
+name: Daily Official Data Monitor
 
-WHERE:
-Repository: trizel-monitor
-Path: .github/workflows/daily.yml
-Branch: main
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "15 2 * * *"
 
-HOW:
-1. Exit Copilot Chat completely.
-2. In GitHub Web UI:
-   Code → .github/workflows → daily.yml → Edit.
-3. Replace the FULL file content with the approved YAML (only YAML, no comments or headers).
-4. Click "Commit changes".
-5. Select "Create a new branch".
-6. Branch name: fix/exit-code-contract
-7. Commit.
+permissions:
+  contents: write
 
-NEXT:
-8. Open Pull Request: fix/exit-code-contract → main
-9. Merge PR into main.
-10. Actions → Daily Official Data Monitor → Run workflow (branch: main).
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
 
-RULES:
-- Do NOT edit via Copilot.
-- Do NOT include TARGET/OBJECTIVE/CONSTRAINTS text in the file.
-- The file must contain YAML only.
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run scientific acquisition
+        id: acquire
+        continue-on-error: true
+        shell: bash
+        run: |
+          python src/main.py
+          code=$?
+          echo "TRIZEL_EXIT_CODE=$code" >> "$GITHUB_ENV"
+
+      - name: Enforce exit-code contract
+        shell: bash
+        run: |
+          echo "TRIZEL_EXIT_CODE=$TRIZEL_EXIT_CODE"
+          if [ "$TRIZEL_EXIT_CODE" -eq 0 ] || [ "$TRIZEL_EXIT_CODE" -eq 2 ]; then
+            exit 0
+          else
+            exit "$TRIZEL_EXIT_CODE"
+          fi
+
+      - name: Commit outputs (safe)
+        if: ${{ env.TRIZEL_EXIT_CODE == '0' || env.TRIZEL_EXIT_CODE == '2' }}
+        run: |
+          git config user.name "auto-dz-act-bot"
+          git config user.email "actions@github.com"
+
+          git add -A
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+
+          git commit -m "Automated data update"
+          git push origin HEAD:refs/heads/auto/data-updates
