@@ -1,6 +1,9 @@
 import os
 import re
 import json
+import sys
+import argparse
+import subprocess
 import requests
 from datetime import datetime
 from typing import Any, Dict, Optional
@@ -157,7 +160,8 @@ def global_platforms_registry() -> Dict[str, Any]:
 # ----------------------------
 # Main
 # ----------------------------
-def main() -> None:
+def run_snapshot() -> None:
+    """Original snapshot mode (unchanged)."""
     os.makedirs(DATA_DIR, exist_ok=True)
 
     retrieved_utc = utc_now_iso()
@@ -228,5 +232,97 @@ def main() -> None:
         raise SystemExit(2)
 
 
+def run_ingest(args: argparse.Namespace) -> None:
+    """Ingest mode (new, offline-first)."""
+    
+    # Determine script path (relative to this file)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    repo_root = os.path.dirname(script_dir)
+    tool_path = os.path.join(repo_root, "tools", "fetch_horizons.py")
+    
+    # Validate tool exists
+    if not os.path.exists(tool_path):
+        print(f"[ERROR] Ingest tool not found: {tool_path}", file=sys.stderr)
+        print(f"[HINT] Ensure tools/fetch_horizons.py exists in the repository", file=sys.stderr)
+        print(f"[HINT] You may need to clone the full repository or check out the correct branch", file=sys.stderr)
+        sys.exit(1)
+    
+    # Offline-first: require --input
+    if not args.input:
+        # Attempt latest snapshot fallback only if it exists
+        latest_snapshot = os.path.join(repo_root, DATA_DIR, "official_snapshot_latest.json")
+        if os.path.exists(latest_snapshot):
+            print(f"[INFO] No --input provided, using latest snapshot: {latest_snapshot}")
+            input_file = latest_snapshot
+        else:
+            print("[ERROR] No input file provided and no latest snapshot available", file=sys.stderr)
+            print("[HINT] Provide an offline input file with: --input <path_to_json>", file=sys.stderr)
+            print("[HINT] Or run snapshot mode first to create a latest snapshot", file=sys.stderr)
+            sys.exit(1)
+    else:
+        input_file = args.input
+        if not os.path.exists(input_file):
+            print(f"[ERROR] Input file not found: {input_file}", file=sys.stderr)
+            print(f"[HINT] Check that the file path is correct and the file exists", file=sys.stderr)
+            print(f"[HINT] Use absolute paths or paths relative to current directory", file=sys.stderr)
+            sys.exit(1)
+    
+    # Call the tool via subprocess
+    print(f"[INFO] Invoking: {tool_path}")
+    print(f"[INFO] Input: {input_file}")
+    
+    try:
+        cmd = [sys.executable, tool_path, "--input", input_file]
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        
+        # Display output
+        if result.stdout:
+            print(result.stdout, end="")
+        if result.stderr:
+            print(result.stderr, end="", file=sys.stderr)
+        
+        # Propagate exit code
+        if result.returncode != 0:
+            print(f"[ERROR] Ingest tool failed with exit code {result.returncode}", file=sys.stderr)
+            print(f"[HINT] Check the error messages above for details", file=sys.stderr)
+            sys.exit(result.returncode)
+    
+    except FileNotFoundError:
+        print(f"[ERROR] Python interpreter not found", file=sys.stderr)
+        print(f"[HINT] Ensure Python is installed and available in PATH", file=sys.stderr)
+        sys.exit(1)
+    except Exception as e:
+        print(f"[ERROR] Unexpected error invoking ingest tool: {e}", file=sys.stderr)
+        print(f"[HINT] Check system logs or file permissions", file=sys.stderr)
+        sys.exit(1)
+
+
+def main() -> None:
+    """Entry point with mode routing."""
+    parser = argparse.ArgumentParser(
+        description="TRIZEL Monitor - Official Data Acquisition",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument(
+        "--mode",
+        choices=["snapshot", "ingest"],
+        default="snapshot",
+        help="Operating mode: snapshot (default) or ingest",
+    )
+    parser.add_argument(
+        "--input",
+        type=str,
+        help="Input file path for ingest mode (offline-first)",
+    )
+
+    args = parser.parse_args()
+
+    if args.mode == "ingest":
+        run_ingest(args)
+    else:
+        run_snapshot()
+
+
 if __name__ == "__main__":
     main()
+
