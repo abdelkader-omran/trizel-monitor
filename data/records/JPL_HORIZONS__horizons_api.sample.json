@@ -6,7 +6,7 @@
     "endpoint_url": "https://ssd.jpl.nasa.gov/api/horizons.api"
   },
   "acquisition": {
-    "retrieved_utc": "2025-12-21T00:50:50Z",
+    "retrieved_utc": "2025-12-21T00:52:46Z",
     "query_parameters": {
       "format": "json",
       "COMMAND": "'3I/ATLAS'",
@@ -22,7 +22,7 @@
     "http_status": 200,
     "response_headers": {
       "content-type": "application/json",
-      "date": "2025-12-21T00:50:50Z"
+      "date": "2025-12-21T00:52:46Z"
     }
   },
   "integrity": {
