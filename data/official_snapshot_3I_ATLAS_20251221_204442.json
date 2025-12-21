@@ -4,7 +4,7 @@
     "pipeline": "Daily Official Data Monitor",
     "query_designation": "3I/ATLAS",
     "resolved_designation": null,
-    "retrieved_utc": "2025-12-21T20:45:45Z",
+    "retrieved_utc": "2025-12-21T20:44:42Z",
     "sources": {
       "sbdb": "https://ssd-api.jpl.nasa.gov/sbdb.api",
       "note": "SBDB is used as an official orbit/phys snapshot endpoint in this acquisition step."
@@ -92,6 +92,6 @@
   "sbdb_data": {},
   "sbdb_error": {
     "type": "request_error",
-    "message": "HTTPSConnectionPool(host='ssd-api.jpl.nasa.gov', port=443): Max retries exceeded with url: /sbdb.api?sstr=3I%2FATLAS&orb=1&phys-par=1 (Caused by NameResolutionError(\"<urllib3.connection.HTTPSConnection object at 0x7fb01d5d85c0>: Failed to resolve 'ssd-api.jpl.nasa.gov' ([Errno -5] No address associated with hostname)\"))"
+    "message": "HTTPSConnectionPool(host='ssd-api.jpl.nasa.gov', port=443): Max retries exceeded with url: /sbdb.api?sstr=3I%2FATLAS&orb=1&phys-par=1 (Caused by NameResolutionError(\"<urllib3.connection.HTTPSConnection object at 0x7f8c2b975820>: Failed to resolve 'ssd-api.jpl.nasa.gov' ([Errno -5] No address associated with hostname)\"))"
   }
 }

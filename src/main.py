@@ -1,6 +1,7 @@
 import os
 import re
 import json
+import argparse
 import requests
 from datetime import datetime
 from typing import Any, Dict, Optional
@@ -155,9 +156,50 @@ def global_platforms_registry() -> Dict[str, Any]:
 
 
 # ----------------------------
+# Ingest Mode (Phase 2)
+# ----------------------------
+def write_raw_ingest(output: Dict[str, Any], retrieved_utc: str, slug: str) -> str:
+    """
+    Write RAW records under deterministic layout: data/raw/YYYY/MM/DD/
+    This is an additive-only (append-only) ingest mode.
+    
+    Returns: path to the written file
+    """
+    # Parse the UTC timestamp to extract date components
+    dt = datetime.strptime(retrieved_utc, "%Y-%m-%dT%H:%M:%SZ")
+    
+    # Build deterministic directory structure: data/raw/YYYY/MM/DD/
+    raw_dir = os.path.join(DATA_DIR, "raw", f"{dt.year:04d}", f"{dt.month:02d}", f"{dt.day:02d}")
+    os.makedirs(raw_dir, exist_ok=True)
+    
+    # Filename: object_YYYYMMDD_HHMMSS.json
+    timestamp = dt.strftime("%Y%m%d_%H%M%S")
+    filename = f"{slug}_{timestamp}.json"
+    filepath = os.path.join(raw_dir, filename)
+    
+    # Write the RAW record
+    write_json(filepath, output)
+    
+    return filepath
+
+
+# ----------------------------
 # Main
 # ----------------------------
 def main() -> None:
+    # Parse command-line arguments
+    parser = argparse.ArgumentParser(
+        description="TRIZEL Monitor - Official Data Acquisition",
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument(
+        "--mode",
+        choices=["default", "ingest"],
+        default="default",
+        help="Execution mode: 'default' writes to data/, 'ingest' writes RAW records to data/raw/ (Phase 2)"
+    )
+    args = parser.parse_args()
+    
     os.makedirs(DATA_DIR, exist_ok=True)
 
     retrieved_utc = utc_now_iso()
@@ -203,23 +245,31 @@ def main() -> None:
         "sbdb_error": sbdb_error,
     }
 
-    # 4) Filenames
+    # 4) Mode-specific output
     slug = safe_slug(TARGET_OBJECT) or "unknown_object"
-    timestamped_path = os.path.join(DATA_DIR, f"official_snapshot_{slug}_{file_stamp}.json")
-    latest_path = os.path.join(DATA_DIR, "official_snapshot_latest.json")
-    registry_path = os.path.join(DATA_DIR, f"platforms_registry_{file_stamp}.json")
+    
+    if args.mode == "ingest":
+        # Phase 2: Ingest mode - write RAW records to deterministic layout
+        raw_path = write_raw_ingest(output, retrieved_utc, slug)
+        print(f"[OK] RAW ingest record written:")
+        print(f" - {raw_path}")
+    else:
+        # Default mode: Original behavior
+        timestamped_path = os.path.join(DATA_DIR, f"official_snapshot_{slug}_{file_stamp}.json")
+        latest_path = os.path.join(DATA_DIR, "official_snapshot_latest.json")
+        registry_path = os.path.join(DATA_DIR, f"platforms_registry_{file_stamp}.json")
 
-    # 5) Write outputs
-    write_json(timestamped_path, output)
-    write_json(latest_path, output)
-    write_json(registry_path, output["platforms_registry"])
+        # 5) Write outputs
+        write_json(timestamped_path, output)
+        write_json(latest_path, output)
+        write_json(registry_path, output["platforms_registry"])
 
-    # 6) Console
-    print("[OK] Official data snapshot written:")
-    print(f" - {timestamped_path}")
-    print(f" - {latest_path}")
-    print(f"[OK] Platforms registry snapshot written:")
-    print(f" - {registry_path}")
+        # 6) Console
+        print("[OK] Official data snapshot written:")
+        print(f" - {timestamped_path}")
+        print(f" - {latest_path}")
+        print(f"[OK] Platforms registry snapshot written:")
+        print(f" - {registry_path}")
 
     # Exit code policy:
     # If SBDB fails, we keep a snapshot (for monitoring), but mark failure via non-zero exit.
