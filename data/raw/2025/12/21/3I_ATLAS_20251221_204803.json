@@ -92,6 +92,6 @@
   "sbdb_data": {},
   "sbdb_error": {
     "type": "request_error",
-    "message": "HTTPSConnectionPool(host='ssd-api.jpl.nasa.gov', port=443): Max retries exceeded with url: /sbdb.api?sstr=3I%2FATLAS&orb=1&phys-par=1 (Caused by NameResolutionError(\"<urllib3.connection.HTTPSConnection object at 0x7f9106a6e450>: Failed to resolve 'ssd-api.jpl.nasa.gov' ([Errno -5] No address associated with hostname)\"))"
+    "message": "HTTPSConnectionPool(host='ssd-api.jpl.nasa.gov', port=443): Max retries exceeded with url: /sbdb.api?sstr=3I%2FATLAS&orb=1&phys-par=1 (Caused by NameResolutionError(\"<urllib3.connection.HTTPSConnection object at 0x7f9907e15fa0>: Failed to resolve 'ssd-api.jpl.nasa.gov' ([Errno -5] No address associated with hostname)\"))"
   }
 }
