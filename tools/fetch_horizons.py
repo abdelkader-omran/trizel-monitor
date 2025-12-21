@@ -125,6 +125,11 @@ def main() -> None:
         required=True,
         help="Path to offline Horizons JSON file",
     )
+    parser.add_argument(
+        "--output-only",
+        action="store_true",
+        help="Dry-run mode: show intended actions without writing files",
+    )
 
     args = parser.parse_args()
 
@@ -158,6 +163,32 @@ def main() -> None:
     source_id = "horizons"
     dataset_key = "snapshot"
     
+    # Dry-run mode
+    if args.output_only:
+        now = datetime.now(timezone.utc)
+        date_str = now.strftime("%Y-%m-%d")
+        raw_base = os.path.join("data", "raw", date_str, source_id, dataset_key)
+        
+        # Simulate record ID generation
+        record_id = generate_record_id()
+        record_path = os.path.join(raw_base, "records", f"{record_id}.json")
+        payload_path = os.path.join(raw_base, "payload", f"{record_id}__payload.json")
+        
+        # Compute what would be written
+        payload_json = json.dumps(data, indent=2, ensure_ascii=False)
+        payload_bytes = payload_json.encode("utf-8")
+        sha256_hash = compute_sha256(payload_bytes)
+        size_bytes = len(payload_bytes)
+        
+        print(f"[DRY-RUN] Would create RAW record:")
+        print(f"  - Record path: {record_path}")
+        print(f"  - Payload path: {payload_path}")
+        print(f"  - Record ID: {record_id}")
+        print(f"  - SHA256: {sha256_hash}")
+        print(f"  - Size: {size_bytes} bytes")
+        print(f"[DRY-RUN] No files written (dry-run mode)")
+        sys.exit(0)
+    
     try:
         # Write RAW record
         result = write_raw_record(
@@ -168,6 +199,7 @@ def main() -> None:
         )
         
         print(f"[OK] RAW record written:")
+
         print(f"  - Record: {result['record_path']}")
         print(f"  - Payload: {result['payload_path']}")
         print(f"  - Record ID: {result['record_id']}")
