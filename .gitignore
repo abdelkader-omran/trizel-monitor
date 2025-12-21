@@ -1,2 +1,6 @@
 # RAW ingest outputs
 data/raw/
+
+# Python cache
+__pycache__/
+*.pyc
