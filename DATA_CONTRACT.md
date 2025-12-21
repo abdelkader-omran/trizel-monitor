@@ -288,6 +288,34 @@ All ingest failures SHALL emit:
 - 1-3 `[HINT]` lines providing actionable guidance
 - Non-zero exit code
 
+### 13.8 Zenodo-Specific Extensions
+
+**CLI Contract:**
+```bash
+python src/ingest/ingest_entrypoint.py --source zenodo --doi <DOI> --mode ingest [--input <path>] [--output-only]
+```
+
+**Source ID Format:**
+- For Zenodo records: `zenodo_<DOI_SUFFIX>`
+- Example: DOI `10.5281/zenodo.16292189` → `zenodo_16292189`
+
+**Provenance Schema for Zenodo:**
+```json
+{
+  "source": "zenodo",
+  "doi": "<full_DOI>",
+  "version": "<version_string_or_unknown>"
+}
+```
+
+**Recognized Zenodo DOIs:**
+All Zenodo ingests MUST reference one of the explicit DOIs listed in `ZENODO_INDEX.md`. No DOI inference is permitted.
+
+**Offline-First Rule:**
+- If `--input` is provided, use offline file and do NOT require network
+- If `--input` is not provided, attempt online fetch via Zenodo API
+- Network failures MUST emit graceful [ERROR] and [HINT] messages
+
 ⸻
 
 14. End of Contract
