@@ -1,6 +1,9 @@
+import argparse
 import os
 import re
 import json
+import subprocess
+import sys
 import requests
 from datetime import datetime
 from typing import Any, Dict, Optional
@@ -155,9 +158,9 @@ def global_platforms_registry() -> Dict[str, Any]:
 
 
 # ----------------------------
-# Main
+# Main - Snapshot Mode (default)
 # ----------------------------
-def main() -> None:
+def run_snapshot() -> None:
     os.makedirs(DATA_DIR, exist_ok=True)
 
     retrieved_utc = utc_now_iso()
@@ -226,6 +229,103 @@ def main() -> None:
     # This helps you see failures in Actions while still preserving diagnostics.
     if sbdb_error is not None:
         raise SystemExit(2)
+
+
+# ----------------------------
+# Main - Ingest Mode
+# ----------------------------
+def run_ingest(offline_input: Optional[str] = None) -> None:
+    """
+    Run ingestion mode using the baseline Horizons acquisition tool.
+    
+    This mode:
+    - Invokes tools/fetch_horizons.py to acquire RAW records
+    - Defaults to offline-first execution via --input flag
+    - Writes records to data/raw/<YYYY-MM-DD>/<SOURCE_ID>/<DATASET_KEY>/
+    
+    Args:
+        offline_input: Path to offline input file (for offline-first execution)
+    """
+    tools_dir = os.path.join(os.path.dirname(__file__), "..", "tools")
+    fetch_horizons_path = os.path.join(tools_dir, "fetch_horizons.py")
+    
+    # Verify tool exists
+    if not os.path.exists(fetch_horizons_path):
+        print(f"[ERROR] Baseline tool not found: {fetch_horizons_path}", file=sys.stderr)
+        print(f"[HINT] Ensure tools/fetch_horizons.py exists in the repository", file=sys.stderr)
+        raise SystemExit(1)
+    
+    # Build command
+    cmd = [sys.executable, fetch_horizons_path]
+    
+    # Default to offline-first execution if no input specified
+    if offline_input:
+        cmd.extend(["--input", offline_input])
+        print(f"[INFO] Running ingest mode with offline input: {offline_input}")
+    else:
+        # Try to use the latest snapshot as offline input (offline-first)
+        latest_snapshot = os.path.join(DATA_DIR, "official_snapshot_latest.json")
+        if os.path.exists(latest_snapshot):
+            cmd.extend(["--input", latest_snapshot])
+            print(f"[INFO] Running ingest mode with offline-first input: {latest_snapshot}")
+        else:
+            # Fall back to online mode but warn user
+            print(f"[WARNING] No offline input found, attempting online mode", file=sys.stderr)
+            print(f"[HINT] For offline-first execution, provide --input <file>", file=sys.stderr)
+    
+    # Run the baseline tool
+    print(f"[INFO] Invoking baseline tool: {' '.join(cmd)}")
+    try:
+        result = subprocess.run(cmd, check=True, capture_output=True, text=True)
+        print(result.stdout)
+        if result.stderr:
+            print(result.stderr, file=sys.stderr)
+        print("[OK] Ingest mode completed successfully")
+    except subprocess.CalledProcessError as e:
+        print(f"[ERROR] Baseline tool failed with exit code {e.returncode}", file=sys.stderr)
+        if e.stdout:
+            print(e.stdout)
+        if e.stderr:
+            print(e.stderr, file=sys.stderr)
+        print(f"[HINT] Try offline mode with --input <file> to use cached data", file=sys.stderr)
+        raise SystemExit(e.returncode)
+    except Exception as e:
+        print(f"[ERROR] Failed to invoke baseline tool: {e}", file=sys.stderr)
+        raise SystemExit(1)
+
+
+# ----------------------------
+# Main Entry Point
+# ----------------------------
+def main() -> None:
+    """
+    Main entry point with mode support.
+    
+    Modes:
+    - snapshot (default): Run snapshot mode (existing functionality)
+    - ingest: Run ingestion mode (baseline Horizons acquisition tool)
+    """
+    parser = argparse.ArgumentParser(
+        description="TRIZEL Monitor - Official Data Acquisition",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument(
+        "--mode",
+        choices=["snapshot", "ingest"],
+        default="snapshot",
+        help="Execution mode: 'snapshot' (default) or 'ingest'",
+    )
+    parser.add_argument(
+        "--input",
+        help="Input file for ingest mode (offline-first execution)",
+    )
+    
+    args = parser.parse_args()
+    
+    if args.mode == "ingest":
+        run_ingest(offline_input=args.input)
+    else:
+        run_snapshot()
 
 
 if __name__ == "__main__":
