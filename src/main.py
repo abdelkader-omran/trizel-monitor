@@ -3,6 +3,7 @@ import re
 import json
 import sys
 import argparse
+import subprocess
 import requests
 from datetime import datetime
 from typing import Any, Dict, Optional
@@ -233,9 +234,49 @@ def run_snapshot() -> None:
 
 def run_ingest(args: argparse.Namespace) -> None:
     """Ingest mode (new, offline-first)."""
-    # Stub for now - will be implemented in subsequent commits
-    print("[INFO] Ingest mode requested")
-    print(f"[INFO] Input: {args.input if args.input else 'not provided'}")
+    
+    # Determine script path (relative to this file)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    repo_root = os.path.dirname(script_dir)
+    tool_path = os.path.join(repo_root, "tools", "fetch_horizons.py")
+    
+    # Validate tool exists
+    if not os.path.exists(tool_path):
+        print(f"[ERROR] Tool not found: {tool_path}", file=sys.stderr)
+        sys.exit(1)
+    
+    # Offline-first: require --input
+    if not args.input:
+        # Attempt latest snapshot fallback only if it exists
+        latest_snapshot = os.path.join(repo_root, DATA_DIR, "official_snapshot_latest.json")
+        if os.path.exists(latest_snapshot):
+            print(f"[INFO] No --input provided, using latest snapshot: {latest_snapshot}")
+            input_file = latest_snapshot
+        else:
+            print("[ERROR] No input file provided and no latest snapshot available", file=sys.stderr)
+            sys.exit(1)
+    else:
+        input_file = args.input
+        if not os.path.exists(input_file):
+            print(f"[ERROR] Input file not found: {input_file}", file=sys.stderr)
+            sys.exit(1)
+    
+    # Call the tool via subprocess
+    print(f"[INFO] Invoking: {tool_path}")
+    print(f"[INFO] Input: {input_file}")
+    
+    cmd = [sys.executable, tool_path, "--input", input_file]
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    
+    # Display output
+    if result.stdout:
+        print(result.stdout, end="")
+    if result.stderr:
+        print(result.stderr, end="", file=sys.stderr)
+    
+    # Propagate exit code
+    if result.returncode != 0:
+        sys.exit(result.returncode)
 
 
 def main() -> None:
