@@ -1,84 +1,107 @@
 #!/usr/bin/env python3
 """
-Fetch data from NASA/JPL Horizons API for 3I/ATLAS
+NASA/JPL Horizons Data Acquisition Tool
 
-This tool performs a reproducible fetch from the Horizons API and stores:
-1. Raw response in data/raw/JPL_HORIZONS/<YYYY-MM-DD>/horizons_<query_id>.json
-2. Schema-compliant raw record in data/records/JPL_HORIZONS__horizons_api.sample.json
+Fetches ephemeris and metadata for 3I/ATLAS from the JPL Horizons API.
+Produces reproducible, verifiable raw data snapshots with SHA-256 integrity.
 
-Requirements:
-- Deterministic request parameters
-- SHA-256 hash computation
-- UTC timestamps in ISO-8601 format
-- Full compliance with spec/raw_record.schema.json
+Usage:
+    # Fetch from API (online mode)
+    python tools/fetch_horizons.py
+
+    # Use saved response (offline mode, when API blocked)
+    python tools/fetch_horizons.py --input horizons.json
 """
 import argparse
 import hashlib
 import json
-import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Tuple
 
 try:
     import requests
 except ImportError:
-    print("ERROR: requests library not found. Install with: pip install requests", file=sys.stderr)
+    print("ERROR: requests library not found.", file=sys.stderr)
+    print("Install with: pip install requests", file=sys.stderr)
     sys.exit(1)
 
 
-# Configuration
+# API Configuration
 HORIZONS_API_URL = "https://ssd.jpl.nasa.gov/api/horizons.api"
 TARGET_OBJECT = "3I/ATLAS"
-SOURCE_ID = "JPL_HORIZONS"
-ENDPOINT_ID = "horizons_api"
 
-# Query parameters (deterministic)
-# Request ephemeris data for 3I/ATLAS
-DEFAULT_QUERY_PARAMS = {
+# Deterministic query parameters for reproducibility
+# Request ephemeris table for 3I/ATLAS from geocentric observer
+CANONICAL_QUERY_PARAMS = {
     "format": "json",
-    "COMMAND": "'3I/ATLAS'",  # Target object
-    "OBJ_DATA": "YES",  # Include object data
-    "MAKE_EPHEM": "YES",  # Generate ephemeris
-    "EPHEM_TYPE": "OBSERVER",  # Observer table
-    "CENTER": "500@399",  # Geocentric (Earth center)
-    "START_TIME": "2025-01-01",  # Fixed start time for reproducibility
-    "STOP_TIME": "2025-01-02",  # Fixed stop time
-    "STEP_SIZE": "1d",  # 1 day step
-    "QUANTITIES": "1,9,20,23,24",  # Specific quantities for reproducibility
+    "COMMAND": "'3I/ATLAS'",
+    "OBJ_DATA": "YES",
+    "MAKE_EPHEM": "YES",
+    "EPHEM_TYPE": "OBSERVER",
+    "CENTER": "500@399",
+    "START_TIME": "2025-01-01",
+    "STOP_TIME": "2025-01-02",
+    "STEP_SIZE": "1d",
+    "QUANTITIES": "1,9,20,23,24",
 }
 
 
 def utc_now_iso() -> str:
-    """Return current UTC time in ISO-8601 format."""
+    """Return current UTC timestamp in ISO-8601 format."""
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def utc_date_compact() -> str:
+def utc_timestamp_compact() -> str:
+    """Return compact timestamp for filenames (YYYYMMDD_HHMMSS)."""
+    return datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+
+
+def utc_date_iso() -> str:
     """Return current UTC date in YYYY-MM-DD format."""
     return datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
 
 def compute_sha256(data: bytes) -> str:
-    """Compute SHA-256 hash of data."""
-    sha256 = hashlib.sha256()
-    sha256.update(data)
-    return sha256.hexdigest()
+    """Compute SHA-256 hash of byte data."""
+    return hashlib.sha256(data).hexdigest()
 
 
-def fetch_from_horizons(params: Dict[str, Any], timeout: int = 30) -> tuple:
+def infer_dataset_role(response_text: str) -> str:
+    """
+    Infer dataset role from Horizons response content.
+    
+    Returns:
+        'ephemeris' if ephemeris data present ($$SOE...$$EOE markers)
+        'metadata_only' if only metadata/search results (no ephemeris)
+    """
+    # Horizons ephemeris tables are marked with $$SOE and $$EOE
+    if "$$SOE" in response_text and "$$EOE" in response_text:
+        return "ephemeris"
+    elif "No matches found" in response_text or "Matching small-bodies" in response_text:
+        return "metadata_only"
+    else:
+        # Default: if it has result data but no clear ephemeris markers
+        return "metadata_only"
+
+
+def fetch_from_api(params: Dict[str, Any], timeout: int = 30) -> Tuple[str, int, Dict[str, str]]:
     """
     Fetch data from Horizons API.
     
+    Args:
+        params: Query parameters
+        timeout: Request timeout in seconds
+    
     Returns:
-        tuple: (response_text, status_code, headers)
+        Tuple of (response_text, status_code, headers_dict)
     
     Raises:
-        requests.RequestException: On network errors
+        requests.RequestException: On network/HTTP errors
     """
     print(f"Fetching from: {HORIZONS_API_URL}")
-    print(f"Parameters: {json.dumps(params, indent=2)}")
+    print(f"Query: COMMAND={params.get('COMMAND')}")
     
     response = requests.get(HORIZONS_API_URL, params=params, timeout=timeout)
     response.raise_for_status()
@@ -86,90 +109,93 @@ def fetch_from_horizons(params: Dict[str, Any], timeout: int = 30) -> tuple:
     return response.text, response.status_code, dict(response.headers)
 
 
-def save_raw_response(response_text: str, query_id: str) -> Path:
+def load_from_file(filepath: str) -> str:
+    """Load response text from local file."""
+    with open(filepath, 'r', encoding='utf-8') as f:
+        return f.read()
+
+
+def save_raw_snapshot(content: str, date_dir: str) -> Path:
     """
-    Save raw response to file.
+    Save raw response to timestamped file.
     
     Args:
-        response_text: Raw response text
-        query_id: Identifier for this query
+        content: Raw response text
+        date_dir: Date directory (YYYY-MM-DD)
     
     Returns:
         Path to saved file
     """
-    date_str = utc_date_compact()
-    raw_dir = Path("data/raw/JPL_HORIZONS") / date_str
+    raw_dir = Path("data/raw/JPL_HORIZONS") / date_dir
     raw_dir.mkdir(parents=True, exist_ok=True)
     
-    filename = f"horizons_{query_id}.json"
+    timestamp = utc_timestamp_compact()
+    filename = f"horizons_3I_ATLAS_{timestamp}.json"
     filepath = raw_dir / filename
     
-    # Write raw response
+    # Write raw content verbatim
     with open(filepath, 'w', encoding='utf-8') as f:
-        f.write(response_text)
+        f.write(content)
     
-    print(f"Raw response saved to: {filepath}")
     return filepath
 
 
-def create_raw_record(
-    raw_file_path: Path,
-    response_text: str,
+def build_raw_record(
+    raw_filepath: Path,
+    content: str,
     query_params: Dict[str, Any],
     retrieved_utc: str,
-    status_code: int,
-    headers: Dict[str, str]
+    dataset_role: str
 ) -> Dict[str, Any]:
     """
-    Create a schema-compliant raw record.
+    Build normalized raw record with integrity and provenance.
     
     Args:
-        raw_file_path: Path to the raw data file
-        response_text: Raw response text
+        raw_filepath: Path to raw data file
+        content: Raw response content
         query_params: Query parameters used
-        retrieved_utc: UTC timestamp of retrieval
-        status_code: HTTP status code
-        headers: HTTP response headers
+        retrieved_utc: Retrieval timestamp
+        dataset_role: 'ephemeris' or 'metadata_only'
     
     Returns:
         Raw record dictionary
     """
-    # Compute integrity information
-    response_bytes = response_text.encode('utf-8')
-    sha256_hash = compute_sha256(response_bytes)
-    file_size = len(response_bytes)
+    content_bytes = content.encode('utf-8')
+    sha256_hash = compute_sha256(content_bytes)
+    size_bytes = len(content_bytes)
     
-    # Get relative path from repository root
-    relative_path = str(raw_file_path)
+    # Stable record ID: source + timestamp
+    record_id = f"NASA_JPL_HORIZONS__3I_ATLAS__{utc_timestamp_compact()}"
     
-    # Create record
     record = {
-        "record_version": "1.0",
+        "record_id": record_id,
         "source": {
-            "source_id": SOURCE_ID,
-            "endpoint_id": ENDPOINT_ID,
-            "endpoint_url": HORIZONS_API_URL
+            "source_id": "NASA_JPL_HORIZONS",
+            "url": HORIZONS_API_URL,
+            "endpoint": "horizons.api",
+            "description": "NASA/JPL Horizons System - Ephemerides and Observer Tables"
         },
         "acquisition": {
             "retrieved_utc": retrieved_utc,
-            "query_parameters": query_params,
-            "http_status": status_code,
-            "response_headers": {
-                "content-type": headers.get("Content-Type", ""),
-                "date": headers.get("Date", "")
-            }
+            "target": TARGET_OBJECT,
+            "dataset_role": dataset_role
+        },
+        "provenance": {
+            "command": query_params.get("COMMAND", ""),
+            "parameters": {
+                k: v for k, v in query_params.items()
+                if k not in ["format", "COMMAND"]
+            },
+            "description": "Canonical fetch with deterministic parameters for reproducibility"
         },
         "integrity": {
             "sha256": sha256_hash,
-            "size_bytes": file_size
+            "size_bytes": size_bytes
         },
-        "raw_data_ref": {
-            "relative_path": relative_path,
-            "format": "json"
-        },
-        "metadata": {
-            "target": TARGET_OBJECT,
-            "notes": "Canonical fetch for 3I/ATLAS from JPL Horizons API"
+        "raw_data": {
+            "relative_path": str(raw_filepath),
+            "format": "json",
+            "content_type": "application/json"
         }
     }
     
@@ -178,7 +204,7 @@ def create_raw_record(
 
 def save_raw_record(record: Dict[str, Any]) -> Path:
     """
-    Save raw record to file.
+    Save raw record to data/records/.
     
     Args:
         record: Raw record dictionary
@@ -189,109 +215,90 @@ def save_raw_record(record: Dict[str, Any]) -> Path:
     records_dir = Path("data/records")
     records_dir.mkdir(parents=True, exist_ok=True)
     
-    filename = f"{SOURCE_ID}__{ENDPOINT_ID}.sample.json"
+    filename = "JPL_HORIZONS__horizons_api.sample.json"
     filepath = records_dir / filename
     
     with open(filepath, 'w', encoding='utf-8') as f:
         json.dump(record, f, indent=2, ensure_ascii=False)
-        f.write('\n')  # Add trailing newline
+        f.write('\n')
     
-    print(f"Raw record saved to: {filepath}")
     return filepath
 
 
-def load_local_file(input_path: str) -> str:
-    """
-    Load a local JSON file (for --input option).
-    
-    Args:
-        input_path: Path to local JSON file
-    
-    Returns:
-        File contents as string
-    """
-    with open(input_path, 'r', encoding='utf-8') as f:
-        return f.read()
-
-
-def main():
+def main() -> int:
     """Main execution function."""
     parser = argparse.ArgumentParser(
-        description='Fetch data from NASA/JPL Horizons API for 3I/ATLAS'
+        description='Fetch ephemeris data from NASA/JPL Horizons API for 3I/ATLAS',
+        epilog='Example: python tools/fetch_horizons.py --input saved_response.json'
     )
     parser.add_argument(
         '--input',
         metavar='FILE',
-        help='Use local JSON file instead of fetching from API (for reproducibility when API is blocked)'
-    )
-    parser.add_argument(
-        '--query-id',
-        default='3I_ATLAS',
-        help='Query identifier for filename (default: 3I_ATLAS)'
+        help='Use saved response file instead of fetching from API (offline mode)'
     )
     
     args = parser.parse_args()
     
     # Record retrieval timestamp
     retrieved_utc = utc_now_iso()
-    
-    # Query parameters
-    query_params = DEFAULT_QUERY_PARAMS.copy()
+    date_dir = utc_date_iso()
     
     try:
         if args.input:
-            # Load from local file
-            print(f"Loading from local file: {args.input}")
-            response_text = load_local_file(args.input)
-            status_code = 200
-            headers = {
-                "Content-Type": "application/json",
-                "Date": retrieved_utc
-            }
-            print(f"Loaded {len(response_text)} bytes from local file")
+            # Offline mode: load from file
+            print(f"Loading from file: {args.input}")
+            response_content = load_from_file(args.input)
+            print(f"Loaded {len(response_content)} bytes")
         else:
-            # Fetch from API
-            response_text, status_code, headers = fetch_from_horizons(query_params)
-            print(f"Received {len(response_text)} bytes from API")
+            # Online mode: fetch from API
+            try:
+                response_content, status_code, headers = fetch_from_api(CANONICAL_QUERY_PARAMS)
+                print(f"Received {len(response_content)} bytes (HTTP {status_code})")
+            except requests.RequestException as e:
+                print(f"\nERROR: Failed to fetch from API: {e}", file=sys.stderr)
+                print("\nHint: If JPL Horizons API is blocked, use offline mode:", file=sys.stderr)
+                print("  python tools/fetch_horizons.py --input horizons.json", file=sys.stderr)
+                return 1
         
-        # Save raw response
-        raw_file_path = save_raw_response(response_text, args.query_id)
+        # Determine dataset role
+        dataset_role = infer_dataset_role(response_content)
+        print(f"Dataset role: {dataset_role}")
         
-        # Create raw record
-        record = create_raw_record(
-            raw_file_path=raw_file_path,
-            response_text=response_text,
-            query_params=query_params,
+        # Save raw snapshot
+        raw_filepath = save_raw_snapshot(response_content, date_dir)
+        print(f"Raw snapshot: {raw_filepath}")
+        
+        # Build raw record
+        record = build_raw_record(
+            raw_filepath=raw_filepath,
+            content=response_content,
+            query_params=CANONICAL_QUERY_PARAMS,
             retrieved_utc=retrieved_utc,
-            status_code=status_code,
-            headers=headers
+            dataset_role=dataset_role
         )
         
         # Save raw record
-        record_file_path = save_raw_record(record)
+        record_filepath = save_raw_record(record)
+        print(f"Raw record:   {record_filepath}")
         
+        # Summary
         print()
-        print("=" * 60)
-        print("SUCCESS: Data acquisition complete")
-        print("=" * 60)
-        print(f"Raw data: {raw_file_path}")
-        print(f"Record:   {record_file_path}")
-        print(f"SHA-256:  {record['integrity']['sha256']}")
-        print(f"Size:     {record['integrity']['size_bytes']} bytes")
-        print()
-        print("To validate, run:")
-        print(f"  python tools/validate_raw_record.py {record_file_path}")
+        print("=" * 70)
+        print("SUCCESS")
+        print("=" * 70)
+        print(f"Record ID:    {record['record_id']}")
+        print(f"Source:       {record['source']['source_id']}")
+        print(f"Target:       {record['acquisition']['target']}")
+        print(f"Role:         {record['acquisition']['dataset_role']}")
+        print(f"SHA-256:      {record['integrity']['sha256']}")
+        print(f"Size:         {record['integrity']['size_bytes']} bytes")
+        print(f"Retrieved:    {record['acquisition']['retrieved_utc']}")
+        print("=" * 70)
         
         return 0
         
     except FileNotFoundError as e:
         print(f"ERROR: File not found: {e}", file=sys.stderr)
-        return 1
-    except requests.RequestException as e:
-        print(f"ERROR: Network request failed: {e}", file=sys.stderr)
-        print()
-        print("Hint: If API is blocked, save a response locally and use:")
-        print("  python tools/fetch_horizons.py --input horizons.json")
         return 1
     except Exception as e:
         print(f"ERROR: Unexpected error: {e}", file=sys.stderr)

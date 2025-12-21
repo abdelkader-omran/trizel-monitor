@@ -1,15 +1,19 @@
 {
-  "record_version": "1.0",
+  "record_id": "NASA_JPL_HORIZONS__3I_ATLAS__20251221_005548",
   "source": {
-    "source_id": "JPL_HORIZONS",
-    "endpoint_id": "horizons_api",
-    "endpoint_url": "https://ssd.jpl.nasa.gov/api/horizons.api"
+    "source_id": "NASA_JPL_HORIZONS",
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api",
+    "endpoint": "horizons.api",
+    "description": "NASA/JPL Horizons System - Ephemerides and Observer Tables"
   },
   "acquisition": {
-    "retrieved_utc": "2025-12-21T00:52:46Z",
-    "query_parameters": {
-      "format": "json",
-      "COMMAND": "'3I/ATLAS'",
+    "retrieved_utc": "2025-12-21T00:55:48Z",
+    "target": "3I/ATLAS",
+    "dataset_role": "ephemeris"
+  },
+  "provenance": {
+    "command": "'3I/ATLAS'",
+    "parameters": {
       "OBJ_DATA": "YES",
       "MAKE_EPHEM": "YES",
       "EPHEM_TYPE": "OBSERVER",
@@ -19,22 +23,15 @@
       "STEP_SIZE": "1d",
       "QUANTITIES": "1,9,20,23,24"
     },
-    "http_status": 200,
-    "response_headers": {
-      "content-type": "application/json",
-      "date": "2025-12-21T00:52:46Z"
-    }
+    "description": "Canonical fetch with deterministic parameters for reproducibility"
   },
   "integrity": {
     "sha256": "5c05d9438d9d88e571e492ba9efa1cfa2843dcb298b248592c7e25f34b4f5277",
     "size_bytes": 4930
   },
-  "raw_data_ref": {
-    "relative_path": "data/raw/JPL_HORIZONS/2025-12-21/horizons_3I_ATLAS.json",
-    "format": "json"
-  },
-  "metadata": {
-    "target": "3I/ATLAS",
-    "notes": "Canonical fetch for 3I/ATLAS from JPL Horizons API"
+  "raw_data": {
+    "relative_path": "data/raw/JPL_HORIZONS/2025-12-21/horizons_3I_ATLAS_20251221_005548.json",
+    "format": "json",
+    "content_type": "application/json"
   }
 }
