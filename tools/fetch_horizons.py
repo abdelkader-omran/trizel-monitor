@@ -64,8 +64,24 @@ def write_raw_record(
     os.makedirs(records_dir, exist_ok=True)
     os.makedirs(payload_dir, exist_ok=True)
     
-    # Generate record ID
-    record_id = generate_record_id()
+    # Generate record ID with collision detection
+    max_attempts = 100
+    record_id = None
+    for attempt in range(max_attempts):
+        candidate_id = generate_record_id()
+        
+        # Check if this ID already exists
+        record_filename = f"{candidate_id}.json"
+        record_path = os.path.join(records_dir, record_filename)
+        payload_filename = f"{candidate_id}__payload.json"
+        payload_path = os.path.join(payload_dir, payload_filename)
+        
+        if not os.path.exists(record_path) and not os.path.exists(payload_path):
+            record_id = candidate_id
+            break
+    
+    if record_id is None:
+        raise RuntimeError(f"Failed to generate unique record ID after {max_attempts} attempts")
     
     # Serialize payload to JSON bytes
     payload_json = json.dumps(payload_data, indent=2, ensure_ascii=False)
@@ -75,9 +91,7 @@ def write_raw_record(
     sha256_hash = compute_sha256(payload_bytes)
     size_bytes = len(payload_bytes)
     
-    # Write payload file
-    payload_filename = f"{record_id}__payload.json"
-    payload_path = os.path.join(payload_dir, payload_filename)
+    # Write payload file (using the collision-safe paths)
     with open(payload_path, "wb") as f:
         f.write(payload_bytes)
     
@@ -92,8 +106,6 @@ def write_raw_record(
     }
     
     # Write record file
-    record_filename = f"{record_id}.json"
-    record_path = os.path.join(records_dir, record_filename)
     write_json(record_path, record_metadata)
     
     return {
