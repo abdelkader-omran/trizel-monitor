@@ -1,5 +1,5 @@
 {
-  "record_id": "NASA_JPL_HORIZONS__3I_ATLAS__20251221_005908",
+  "record_id": "NASA_JPL_HORIZONS__3I_ATLAS__20251221_005954",
   "source": {
     "source_id": "NASA_JPL_HORIZONS",
     "url": "https://ssd.jpl.nasa.gov/api/horizons.api",
@@ -7,7 +7,7 @@
     "description": "NASA/JPL Horizons System - Ephemerides and Observer Tables"
   },
   "acquisition": {
-    "retrieved_utc": "2025-12-21T00:59:08Z",
+    "retrieved_utc": "2025-12-21T00:59:54Z",
     "target": "3I/ATLAS",
     "dataset_role": "ephemeris"
   },
@@ -30,7 +30,7 @@
     "size_bytes": 4930
   },
   "raw_data": {
-    "relative_path": "data/raw/JPL_HORIZONS/2025-12-21/horizons_3I_ATLAS_20251221_005908.json",
+    "relative_path": "data/raw/JPL_HORIZONS/2025-12-21/horizons_3I_ATLAS_20251221_005954.json",
     "format": "json",
     "content_type": "application/json"
   }
