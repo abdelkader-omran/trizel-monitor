@@ -18,7 +18,7 @@ import json
 import os
 import sys
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -31,9 +31,9 @@ except ImportError:
 # ============================================================
 # Configuration
 # ============================================================
-HORIZONS_API_URL = os.getenv("HORIZONS_API_URL", "https://ssd.jpl.nasa.gov/api/horizons.api").strip()
+HORIZONS_API_URL = os.getenv("HORIZONS_API_URL", "https://ssd.jpl.nasa.gov/api/horizons.api")
 HTTP_TIMEOUT_SEC = int(os.getenv("HTTP_TIMEOUT_SEC", "30"))
-DATA_DIR = os.getenv("DATA_DIR", "data").strip() or "data"
+DATA_DIR = os.getenv("DATA_DIR", "data") or "data"
 SOURCE_ID = "NASA_JPL_HORIZONS"
 DATASET_KEY = "horizons_api"
 
@@ -43,12 +43,12 @@ DATASET_KEY = "horizons_api"
 # ============================================================
 def utc_now_iso() -> str:
     """Return current UTC timestamp in ISO format."""
-    return datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def utc_date() -> str:
     """Return current UTC date in YYYY-MM-DD format."""
-    return datetime.utcnow().strftime("%Y-%m-%d")
+    return datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
 
 def write_json(path: str, payload: Dict[str, Any]) -> None:
