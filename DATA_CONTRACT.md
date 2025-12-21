@@ -186,7 +186,111 @@ this document takes precedence.
 
 ⸻
 
-13. End of Contract
+## 13. RAW Ingest Contract (Phase 2 Extension)
+
+### 13.1 Purpose
+
+This section extends the TRIZEL Monitor data contract to include the **RAW ingest layer**, which provides append-only, immutable storage for all ingested data artifacts.
+
+### 13.2 Directory Structure
+
+All RAW ingest SHALL follow this structure:
+
+```
+data/raw/<YYYY-MM-DD>/<SOURCE_ID>/<DATASET_KEY>/
+  records/
+    <record_id>.json
+  payload/
+    <record_id>__payload.json
+```
+
+Where:
+- `<YYYY-MM-DD>` is the UTC date of ingestion
+- `<SOURCE_ID>` identifies the data source (e.g., "horizons", "zenodo_<DOI_SUFFIX>")
+- `<DATASET_KEY>` identifies the dataset type (e.g., "snapshot")
+- `<record_id>` is a unique UUID v4 identifier
+
+### 13.3 Record Metadata Schema
+
+Each `records/<record_id>.json` file SHALL contain:
+
+```json
+{
+  "record_id": "<UUID>",
+  "retrieved_utc": "<ISO-8601 UTC with timezone>",
+  "provenance": {
+    "source": "<source_identifier>",
+    ...additional source-specific fields
+  },
+  "sha256": "<hex_digest>",
+  "size_bytes": <integer>,
+  "payload_path": "payload/<record_id>__payload.json"
+}
+```
+
+**Required Fields:**
+- `record_id` (string): Unique identifier for this record
+- `retrieved_utc` (string): Timezone-aware UTC timestamp (ISO-8601)
+- `provenance` (object): Source metadata
+- `sha256` (string): SHA-256 hash of payload bytes
+- `size_bytes` (integer): Size of payload in bytes
+- `payload_path` (string): Relative path to payload file
+
+**Provenance Requirements:**
+
+For Zenodo sources:
+```json
+"provenance": {
+  "source": "zenodo",
+  "doi": "<DOI>",
+  "version": "<version_if_available>",
+  ...
+}
+```
+
+For offline files:
+```json
+"provenance": {
+  "source": "offline_file",
+  "input_file": "<absolute_path>",
+  "ingested_at": "<ISO-8601_UTC>"
+}
+```
+
+### 13.4 Immutability Guarantees
+
+1. **No Overwrites**: If a `record_id` collision occurs, a new UUID SHALL be generated
+2. **Append-Only**: Existing records SHALL never be modified
+3. **Integrity**: `sha256` and `size_bytes` SHALL be computed from actual payload bytes on disk
+4. **Deterministic Paths**: Directory structure SHALL be deterministic based on date and source
+
+### 13.5 Collision Handling
+
+When generating a `record_id`:
+1. Generate a UUID v4
+2. Check if `records/<record_id>.json` OR `payload/<record_id>__payload.json` exists
+3. If either exists, regenerate UUID and retry
+4. Maximum retry attempts: 100
+5. If max attempts exceeded, fail with error
+
+### 13.6 Dry-Run Mode
+
+Ingest tools SHALL support `--output-only` mode that:
+- Reads and validates input
+- Computes intended paths and metadata
+- Prints planned actions
+- Does NOT write any files
+
+### 13.7 Error Handling
+
+All ingest failures SHALL emit:
+- At least one `[ERROR]` line describing the failure
+- 1-3 `[HINT]` lines providing actionable guidance
+- Non-zero exit code
+
+⸻
+
+14. End of Contract
 
 This file intentionally contains no executable logic.
 
