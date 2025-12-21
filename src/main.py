@@ -242,7 +242,9 @@ def run_ingest(args: argparse.Namespace) -> None:
     
     # Validate tool exists
     if not os.path.exists(tool_path):
-        print(f"[ERROR] Tool not found: {tool_path}", file=sys.stderr)
+        print(f"[ERROR] Ingest tool not found: {tool_path}", file=sys.stderr)
+        print(f"[HINT] Ensure tools/fetch_horizons.py exists in the repository", file=sys.stderr)
+        print(f"[HINT] You may need to clone the full repository or check out the correct branch", file=sys.stderr)
         sys.exit(1)
     
     # Offline-first: require --input
@@ -254,29 +256,45 @@ def run_ingest(args: argparse.Namespace) -> None:
             input_file = latest_snapshot
         else:
             print("[ERROR] No input file provided and no latest snapshot available", file=sys.stderr)
+            print("[HINT] Provide an offline input file with: --input <path_to_json>", file=sys.stderr)
+            print("[HINT] Or run snapshot mode first to create a latest snapshot", file=sys.stderr)
             sys.exit(1)
     else:
         input_file = args.input
         if not os.path.exists(input_file):
             print(f"[ERROR] Input file not found: {input_file}", file=sys.stderr)
+            print(f"[HINT] Check that the file path is correct and the file exists", file=sys.stderr)
+            print(f"[HINT] Use absolute paths or paths relative to current directory", file=sys.stderr)
             sys.exit(1)
     
     # Call the tool via subprocess
     print(f"[INFO] Invoking: {tool_path}")
     print(f"[INFO] Input: {input_file}")
     
-    cmd = [sys.executable, tool_path, "--input", input_file]
-    result = subprocess.run(cmd, capture_output=True, text=True)
+    try:
+        cmd = [sys.executable, tool_path, "--input", input_file]
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        
+        # Display output
+        if result.stdout:
+            print(result.stdout, end="")
+        if result.stderr:
+            print(result.stderr, end="", file=sys.stderr)
+        
+        # Propagate exit code
+        if result.returncode != 0:
+            print(f"[ERROR] Ingest tool failed with exit code {result.returncode}", file=sys.stderr)
+            print(f"[HINT] Check the error messages above for details", file=sys.stderr)
+            sys.exit(result.returncode)
     
-    # Display output
-    if result.stdout:
-        print(result.stdout, end="")
-    if result.stderr:
-        print(result.stderr, end="", file=sys.stderr)
-    
-    # Propagate exit code
-    if result.returncode != 0:
-        sys.exit(result.returncode)
+    except FileNotFoundError:
+        print(f"[ERROR] Python interpreter not found", file=sys.stderr)
+        print(f"[HINT] Ensure Python is installed and available in PATH", file=sys.stderr)
+        sys.exit(1)
+    except Exception as e:
+        print(f"[ERROR] Unexpected error invoking ingest tool: {e}", file=sys.stderr)
+        print(f"[HINT] Check system logs or file permissions", file=sys.stderr)
+        sys.exit(1)
 
 
 def main() -> None:
