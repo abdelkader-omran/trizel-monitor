@@ -1,6 +1,8 @@
 import os
 import re
 import json
+import sys
+import argparse
 import requests
 from datetime import datetime
 from typing import Any, Dict, Optional
@@ -157,7 +159,8 @@ def global_platforms_registry() -> Dict[str, Any]:
 # ----------------------------
 # Main
 # ----------------------------
-def main() -> None:
+def run_snapshot() -> None:
+    """Original snapshot mode (unchanged)."""
     os.makedirs(DATA_DIR, exist_ok=True)
 
     retrieved_utc = utc_now_iso()
@@ -228,5 +231,39 @@ def main() -> None:
         raise SystemExit(2)
 
 
+def run_ingest(args: argparse.Namespace) -> None:
+    """Ingest mode (new, offline-first)."""
+    # Stub for now - will be implemented in subsequent commits
+    print("[INFO] Ingest mode requested")
+    print(f"[INFO] Input: {args.input if args.input else 'not provided'}")
+
+
+def main() -> None:
+    """Entry point with mode routing."""
+    parser = argparse.ArgumentParser(
+        description="TRIZEL Monitor - Official Data Acquisition",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument(
+        "--mode",
+        choices=["snapshot", "ingest"],
+        default="snapshot",
+        help="Operating mode: snapshot (default) or ingest",
+    )
+    parser.add_argument(
+        "--input",
+        type=str,
+        help="Input file path for ingest mode (offline-first)",
+    )
+
+    args = parser.parse_args()
+
+    if args.mode == "ingest":
+        run_ingest(args)
+    else:
+        run_snapshot()
+
+
 if __name__ == "__main__":
     main()
+
