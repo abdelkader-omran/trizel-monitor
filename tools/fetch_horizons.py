@@ -40,11 +40,11 @@ CANONICAL_QUERY_PARAMS = {
     "OBJ_DATA": "YES",
     "MAKE_EPHEM": "YES",
     "EPHEM_TYPE": "OBSERVER",
-    "CENTER": "500@399",
+    "CENTER": "500@399",  # 500=geocenter, 399=Earth
     "START_TIME": "2025-01-01",
     "STOP_TIME": "2025-01-02",
     "STEP_SIZE": "1d",
-    "QUANTITIES": "1,9,20,23,24",
+    "QUANTITIES": "1,9,20,23,24",  # 1=RA/DEC, 9=mag, 20=range, 23=range-rate, 24=light-time
 }
 
 
@@ -167,6 +167,9 @@ def build_raw_record(
     # Stable record ID: source + timestamp
     record_id = f"NASA_JPL_HORIZONS__3I_ATLAS__{utc_timestamp_compact()}"
     
+    # Use relative path from repository root
+    relative_path = str(raw_filepath) if not raw_filepath.is_absolute() else str(raw_filepath.relative_to(Path.cwd()))
+    
     record = {
         "record_id": record_id,
         "source": {
@@ -193,7 +196,7 @@ def build_raw_record(
             "size_bytes": size_bytes
         },
         "raw_data": {
-            "relative_path": str(raw_filepath),
+            "relative_path": relative_path,
             "format": "json",
             "content_type": "application/json"
         }
