@@ -1,0 +1,7 @@
+./README.md:68:📁 Zenodo: [https://zenodo.org/records/16292189](https://zenodo.org/records/16292189)  
+./docs/validation_summary.md:8:**Zenodo DOI:** [15616047](https://zenodo.org/records/15616047)
+./docs/validation_summary.md:14:| Cosmic Background (CMB)  | Planck     | ✅ Full Match   | [15616047](https://zenodo.org/records/15616047)             |
+./docs/validation_summary.md:15:| Redshift Validation      | SDSS       | ✅ Agreement    | [15618866](https://zenodo.org/records/15618866)             |
+./docs/validation_summary.md:16:| LHC Spectral Output      | ATLAS/CMS  | ✅ Consistent   | [15569226](https://zenodo.org/records/15569226)             |
+./docs/validation_summary.md:32:- Main Zenodo Summary: [16292189](https://zenodo.org/records/16292189)  
+grep: ./SCAN_OUTPUT/Auto-dz-act__rg_hits.txt: input file is also the output

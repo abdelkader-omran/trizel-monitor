@@ -1,0 +1,6 @@
+/tmp/WORKSPACE_TRIZEL_LOCAL_SCAN/Auto-dz-monitor/src/monitor.py:8: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "timestamp": str(datetime.datetime.utcnow()),
+📡 AUTO DZ MONITOR – Report: 2025-12-22 01:03:46.806084
+planck_value: ✔️ Stable
+sdss_value: ✔️ Stable
+lhc_value: ✔️ Stable

@@ -1,0 +1,17 @@
+Checkpoint_ID,Checkpoint_Name,Auto-dz-act,Auto-dz-monitor,Auto-dz-api-monitor,STOE-Knowledge-Core-
+A1,Unified CLI or executable entrypoint,D0/DZ,D0/DZ,D0/DZ,D0/DZ
+A2,Explicit ingest mode (--mode ingest),0/0,0/0,0/0,0/0
+A3,Offline-first ingestion via --input,D0/DZ,0/0,0/0,0/0
+B1,Deterministic RAW path,0/0,0/0,0/0,0/0
+B2,Append-only behavior,0/0,0/0,0/0,0/0
+B3,Payload stored verbatim,0/0,0/0,0/0,0/0
+C1,Dual-artifact: payload/<record_id>__payload.json,0/0,0/0,0/0,0/0
+C2,Dual-artifact: records/<record_id>.json,0/0,0/0,0/0,0/0
+D1,Audit field: record_id,0/0,0/0,0/0,0/0
+D2,Audit field: retrieved_utc,0/0,D0/DZ,0/0,0/0
+D3,Audit field: provenance,0/0,0/0,0/0,0/0
+D4,Audit field: sha256,0/0,0/0,0/0,0/0
+D5,Audit field: size_bytes,0/0,0/0,0/0,0/0
+E1,Snapshot/monitoring pipelines remain untouched,D0/DZ,D0/DZ,D0/DZ,D0/DZ
+E2,Ingest mode calls existing fetch/monitor tools,0/0,0/0,0/0,0/0
+E3,Explicit documentation: non-breaking additive-only,0/0,0/0,0/0,0/0
