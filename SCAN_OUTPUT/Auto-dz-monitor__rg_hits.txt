@@ -1,0 +1,8 @@
+./README.md:1:# 🌐 Auto-dz-monitor
+./README.md:4:Developed by **TRIZEL STOE LAB** – Real-time AI monitoring of experimental scientific data from CMB, Redshift, LHC, and more.
+./README.md:23:- Constant monitoring of anomalies (DZ / 0 logic)
+./README.md:31:- [Zenodo DOI: 16292189](https://zenodo.org/records/16292189)  
+./docs/cosmic_constant.md:48:- [Zenodo DOI: 16292189](https://zenodo.org/records/16292189)  
+./src/monitor.py:1:# monitor.py – AUTO DZ ACT real-time scientific monitor
+./src/monitor.py:5:def fetch_sample_data():
+./src/monitor.py:23:    data = fetch_sample_data()

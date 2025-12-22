@@ -1,0 +1,2 @@
+./README.md:23:- [`auto-dz-api-monitor`](https://github.com/trizel-ai/auto-dz-api-monitor)
+./README.md:32:- 🔗 [Zenodo Core Validation](https://zenodo.org/records/16292189)  
