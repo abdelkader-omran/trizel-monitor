@@ -15,13 +15,14 @@ All data files follow the authoritative schema defined in DATA_CONTRACT.md.
 |----------|---------------|--------|------|--------|
 | snapshot_3I_ATLAS_latest.json | SNAPSHOT | NASA | Latest snapshot | Active |
 | snapshot_3I_ATLAS_20260110_185404.json | SNAPSHOT | NASA | Timestamped snapshot | Active |
+| snapshot_3I_ATLAS_20260110_185452.json | SNAPSHOT | NASA | Timestamped snapshot | Active |
 
-**Total Data Files:** 2 (as of 2026-01-10)
+**Total Data Files:** 3 (as of 2026-01-10)
 
 ### Classification Breakdown
 
 - **RAW_DATA:** 0 files (direct archival downloads only)
-- **SNAPSHOT:** 2 files (JPL SBDB API responses)
+- **SNAPSHOT:** 3 files (JPL SBDB API responses)
 - **DERIVED:** 0 files (analysis results)
 
 ---

@@ -109,7 +109,7 @@ Validates on every push/PR:
 - 1 TASK_TRIZEL_SCIENTIFIC_INGEST.md (empty)
 
 **Current inventory:**
-- 2 data files (all v2.0.0 compliant)
+- 3 data files (all v2.0.0 compliant)
 - 100% validation pass rate
 
 ### 8. Consolidated Documentation ✅
@@ -256,7 +256,7 @@ See `SUPERSESSION_NOTICE.md` for detailed instructions.
 
 **Version:** 2.0.0  
 **Status:** AUTHORITATIVE and ACTIVE  
-**Compliance:** 100% (2/2 files passing)  
+**Compliance:** 100% (3/3 files passing)  
 **CI:** Enforced  
 **Documentation:** Consistent  
 
