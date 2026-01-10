@@ -145,8 +145,8 @@ Each data file SHALL conform to the following schema with EXACTLY ONE metadata b
     "resolved_designation": "string | null - API-returned designation",
     "retrieved_utc": "ISO-8601 UTC string",
     "checksum": {
-      "algorithm": "sha256 | sha512",
-      "value": "hex string - required"
+      "algorithm": "sha256",
+      "value": "hex string - required (SHA-256 hash of file content)"
     },
     "provenance": {
       "source_url": "string - API endpoint or archive URL",
@@ -194,16 +194,23 @@ Each data file SHALL conform to the following schema with EXACTLY ONE metadata b
 - Checksum MUST be computed over the entire file content
 - Checksum MUST be stored in `trizel_metadata.checksum.value`
 
-### 7.2 Optional Algorithm
+### 7.2 Current Implementation
 
-- **SHA-512:** OPTIONAL, may be provided in `trizel_metadata.checksum.sha512`
+- **SHA-256:** Currently implemented and required
+- Checksum computed over entire file structure (excluding checksum value itself)
+- All checksums normalized to lowercase hex for consistency
 
-### 7.3 Forbidden Algorithms
+### 7.3 Future Extensions
+
+- **SHA-512:** May be added in future versions for additional verification
+- Would be stored in a separate field if implemented
+
+### 7.4 Forbidden Algorithms
 
 - **MD5:** ABSOLUTELY FORBIDDEN (cryptographically broken)
 - Any code or data file using MD5 MUST cause CI to fail
 
-### 7.4 Checksum Verification
+### 7.5 Checksum Verification
 
 - All data files MUST include a valid SHA-256 checksum
 - Validation scripts MUST verify checksums match file content

@@ -109,7 +109,7 @@ Validates on every push/PR:
 - 1 TASK_TRIZEL_SCIENTIFIC_INGEST.md (empty)
 
 **Current inventory:**
-- 3 data files (all v2.0.0 compliant)
+- 2 data files (all v2.0.0 compliant)
 - 100% validation pass rate
 
 ### 8. Consolidated Documentation ✅
@@ -134,15 +134,17 @@ Validates on every push/PR:
 ================================================================================
 TRIZEL Data Governance Validator
 ================================================================================
-Found 3 JSON files to validate
+Found 2 JSON files to validate
 
 Results:
-✓ snapshot_3I_ATLAS_20260110_181838.json: PASS
-✓ snapshot_3I_ATLAS_20260110_182349.json: PASS
+✓ snapshot_3I_ATLAS_20260110_185404.json: PASS
 ✓ snapshot_3I_ATLAS_latest.json: PASS
 
-Summary: 3 passed, 0 failed
+Summary: 2 passed, 0 failed
 Total: 0 errors, 0 warnings
+================================================================================
+Validation PASSED
+```
 ================================================================================
 Validation PASSED
 ```
@@ -254,7 +256,7 @@ See `SUPERSESSION_NOTICE.md` for detailed instructions.
 
 **Version:** 2.0.0  
 **Status:** AUTHORITATIVE and ACTIVE  
-**Compliance:** 100% (3/3 files passing)  
+**Compliance:** 100% (2/2 files passing)  
 **CI:** Enforced  
 **Documentation:** Consistent  
 

@@ -7,8 +7,16 @@ echo "=========================================="
 
 echo ""
 echo "1. Testing data acquisition (main.py)..."
+set +e  # Temporarily allow non-zero exit codes
 python src/main.py
-echo "   ✓ Data acquisition completed (exit code 2 expected for network error)"
+exit_code=$?
+set -e  # Re-enable exit on error
+if [ $exit_code -eq 0 ] || [ $exit_code -eq 2 ]; then
+    echo "   ✓ Data acquisition completed (exit code: $exit_code)"
+else
+    echo "   ✗ Data acquisition failed with unexpected exit code: $exit_code"
+    exit 1
+fi
 
 echo ""
 echo "2. Testing data validation..."
@@ -55,10 +63,17 @@ print(f'   ✓ SHA-256: {meta[\"checksum\"][\"value\"][:16]}...')
 
 echo ""
 echo "5. Checking documentation consistency..."
-if grep -q "v2.0.0\|2.0.0" DATA_CONTRACT.md README.md MANIFEST.md; then
-    echo "   ✓ Documentation references v2.0.0"
+# Check that all docs reference version 2.0.0 (with word boundaries to avoid false matches)
+version_count=0
+for file in DATA_CONTRACT.md README.md MANIFEST.md; do
+    if grep -E "(^|[^0-9])2\.0\.0([^0-9]|$)" "$file" > /dev/null; then
+        version_count=$((version_count + 1))
+    fi
+done
+if [ $version_count -eq 3 ]; then
+    echo "   ✓ All documentation references v2.0.0"
 else
-    echo "   ✗ Documentation version mismatch"
+    echo "   ✗ Documentation version mismatch (found v2.0.0 in $version_count/3 files)"
     exit 1
 fi
 

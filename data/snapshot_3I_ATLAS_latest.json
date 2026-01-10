@@ -7,10 +7,10 @@
     "source_agency": "NASA",
     "query_designation": "3I/ATLAS",
     "resolved_designation": null,
-    "retrieved_utc": "2026-01-10T18:23:49Z",
+    "retrieved_utc": "2026-01-10T18:54:52Z",
     "checksum": {
       "algorithm": "sha256",
-      "value": "68e61b075c9ec53c11a0c6e22712ceb2120d08db536eb191b9748923c665620f"
+      "value": "8d8f46fbf86839ee86e464c467e66fdd78a3ea619208734a6948cba5c0fdf9bb"
     },
     "provenance": {
       "source_url": "https://ssd-api.jpl.nasa.gov/sbdb.api",

@@ -122,8 +122,10 @@ def compute_sha256(data: str) -> str:
     
     SHA-256 is REQUIRED by data governance policy.
     MD5 is FORBIDDEN (cryptographically broken).
+    
+    Returns lowercase hex string for consistency.
     """
-    return hashlib.sha256(data.encode('utf-8')).hexdigest()
+    return hashlib.sha256(data.encode('utf-8')).hexdigest().lower()
 
 
 def write_json(path: str, payload: Dict[str, Any]) -> None:
@@ -196,7 +198,7 @@ def build_trizel_metadata(
     source_type: str,
     has_data: bool,
     has_error: bool,
-    data_json: str
+    data_json: str  # Not used anymore, kept for compatibility
 ) -> Dict[str, Any]:
     """
     Build the SINGLE authoritative metadata block: trizel_metadata.
@@ -204,10 +206,12 @@ def build_trizel_metadata(
     This is the ONLY metadata block allowed at root level.
     All other keys (metadata, platforms_registry, sbdb_data, sbdb_error) are FORBIDDEN.
     
+    Note: Checksum will be computed separately over the entire file content.
+    
     See DATA_CONTRACT.md section 6 for schema specification.
     """
     # Get visual attributes for classification
-    visual = VISUAL_ATTRIBUTES.get(classification, VISUAL_ATTRIBUTES[DataClassification.SNAPSHOT])
+    visual_attrs = VISUAL_ATTRIBUTES.get(classification, VISUAL_ATTRIBUTES[DataClassification.SNAPSHOT])
     
     return {
         "project": "TRIZEL Monitor",
@@ -220,14 +224,14 @@ def build_trizel_metadata(
         "retrieved_utc": retrieved_utc,
         "checksum": {
             "algorithm": "sha256",
-            "value": compute_sha256(data_json)
+            "value": ""  # Will be filled in after computing over entire file
         },
         "provenance": {
             "source_url": source_url,
             "source_type": source_type,
             "release_policy": "Public API - computed values updated as orbital solutions are refined"
         },
-        "visual_attributes": visual,
+        "visual_attributes": visual_attrs,
         "integrity": {
             "has_data_payload": has_data,
             "has_error": has_error,
@@ -272,10 +276,7 @@ def main() -> None:
         "error_type": error_type,
     }
     
-    # Convert to JSON string for checksum computation
-    data_json = json.dumps(data_payload, indent=2, ensure_ascii=False)
-    
-    # Build the SINGLE metadata block
+    # Build the SINGLE metadata block (without checksum first)
     trizel_metadata = build_trizel_metadata(
         classification=DataClassification.SNAPSHOT,  # JPL SBDB API is SNAPSHOT, not RAW_DATA
         agency=SourceAgency.NASA,
@@ -286,7 +287,7 @@ def main() -> None:
         source_type="api",
         has_data=bool(sbdb_payload),
         has_error=has_error,
-        data_json=data_json
+        data_json=""  # Will compute checksum properly below
     )
     
     # FINAL OUTPUT STRUCTURE (compliant with DATA_CONTRACT.md v2.0.0)
@@ -294,6 +295,17 @@ def main() -> None:
         "trizel_metadata": trizel_metadata,
         "data": data_payload
     }
+    
+    # Compute checksum over the entire file content (excluding the checksum field itself)
+    # This ensures the checksum validates the complete file structure
+    output_for_checksum = output.copy()
+    output_for_checksum["trizel_metadata"] = output["trizel_metadata"].copy()
+    output_for_checksum["trizel_metadata"]["checksum"] = {"algorithm": "sha256", "value": ""}
+    file_content_json = json.dumps(output_for_checksum, indent=2, ensure_ascii=False, sort_keys=True)
+    checksum_value = compute_sha256(file_content_json)
+    
+    # Update the checksum in the actual output
+    output["trizel_metadata"]["checksum"]["value"] = checksum_value
 
     # 3) Filenames
     slug = safe_slug(TARGET_OBJECT) or "unknown_object"

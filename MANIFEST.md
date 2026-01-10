@@ -14,7 +14,7 @@ All data files follow the authoritative schema defined in DATA_CONTRACT.md.
 | Filename | Classification | Agency | Type | Status |
 |----------|---------------|--------|------|--------|
 | snapshot_3I_ATLAS_latest.json | SNAPSHOT | NASA | Latest snapshot | Active |
-| snapshot_3I_ATLAS_YYYYMMDD_HHMMSS.json | SNAPSHOT | NASA | Timestamped snapshot | Active |
+| snapshot_3I_ATLAS_20260110_185404.json | SNAPSHOT | NASA | Timestamped snapshot | Active |
 
 **Total Data Files:** 2 (as of 2026-01-10)
 

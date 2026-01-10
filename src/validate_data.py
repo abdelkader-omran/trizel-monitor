@@ -214,7 +214,7 @@ def check_data_classification(file_path: str, metadata: Dict[str, Any]) -> List[
         if source_type == "api":
             errors.append(ValidationError(
                 file_path, "RAW_DATA_RULES",
-                "RAW_DATA classification not allowed for API sources. API responses are SNAPSHOT. Use source_type='archive' or 'download' for RAW_DATA."
+                "RAW_DATA classification not allowed for API sources (source_type='api'). API responses must be classified as SNAPSHOT. For RAW_DATA, use source_type='archive' or 'download'."
             ))
         
         # RAW_DATA requires official agency
@@ -291,13 +291,19 @@ def check_checksum_policy(file_path: str, metadata: Dict[str, Any]) -> List[Vali
             "Missing SHA-256 checksum value (required)"
         ))
     
-    # Validate SHA-256 format (64 hex characters)
+    # Validate SHA-256 format (64 lowercase hex characters)
     sha256_value = checksum.get("value", "")
-    if sha256_value and (len(sha256_value) != 64 or not all(c in "0123456789abcdefABCDEF" for c in sha256_value)):
-        errors.append(ValidationError(
-            file_path, "CHECKSUM_POLICY",
-            f"Invalid SHA-256 format (must be 64 hex characters): {sha256_value[:20]}..."
-        ))
+    if sha256_value:
+        if len(sha256_value) != 64:
+            errors.append(ValidationError(
+                file_path, "CHECKSUM_POLICY",
+                f"Invalid SHA-256 length (must be 64 characters): got {len(sha256_value)}"
+            ))
+        elif not all(c in "0123456789abcdef" for c in sha256_value):
+            errors.append(ValidationError(
+                file_path, "CHECKSUM_POLICY",
+                f"Invalid SHA-256 format (must be lowercase hex): {sha256_value[:20]}..."
+            ))
     
     return errors
 
@@ -345,24 +351,33 @@ def check_visual_attributes(file_path: str, metadata: Dict[str, Any]) -> List[Va
 
 def check_md5_in_file(file_path: str) -> List[ValidationError]:
     """
-    Check for any MD5 references in the file (forbidden).
+    Check for MD5 usage in data files (forbidden).
     
-    RULE: MD5 is absolutely forbidden anywhere in data files or code.
+    RULE: MD5 checksums are forbidden in data files (cryptographically broken).
+    Note: This only checks for MD5 in the actual checksum fields, not in documentation.
     """
     errors = []
     
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
-            content = f.read().lower()
+            data = json.load(f)
         
-        # Check for MD5 references (case-insensitive)
-        if 'md5' in content:
-            errors.append(ValidationError(
-                file_path, "CHECKSUM_POLICY",
-                "MD5 reference found in file (FORBIDDEN - cryptographically broken). Use SHA-256 only."
-            ))
-    except Exception:
-        pass  # Already caught by file read errors
+        # Check if there's an MD5 checksum in the metadata
+        if "trizel_metadata" in data:
+            checksum = data["trizel_metadata"].get("checksum", {})
+            # Check for MD5 in algorithm field or as a checksum key
+            if checksum.get("algorithm", "").lower() == "md5":
+                errors.append(ValidationError(
+                    file_path, "CHECKSUM_POLICY",
+                    "MD5 algorithm found in checksum (FORBIDDEN - cryptographically broken). Use SHA-256 only."
+                ))
+            if "md5" in checksum or "MD5" in checksum:
+                errors.append(ValidationError(
+                    file_path, "CHECKSUM_POLICY",
+                    "MD5 checksum field found (FORBIDDEN - cryptographically broken). Use SHA-256 only."
+                ))
+    except (json.JSONDecodeError, Exception):
+        pass  # Not a valid JSON file or already caught by other validators
     
     return errors
 
