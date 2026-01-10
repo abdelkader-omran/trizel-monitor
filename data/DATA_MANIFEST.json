@@ -1,0 +1,172 @@
+{
+  "manifest_version": "1.0.0",
+  "generated_utc": "2026-01-10T17:04:33Z",
+  "repository": "abdelkader-omran/trizel-monitor",
+  "purpose": "Scientific data classification and provenance tracking",
+  "artifacts": [
+    {
+      "filename": "jpl_sbdb_20251218_191351.json",
+      "data_class": "RAW_DATA",
+      "source_agency": "NASA",
+      "retrieval_timestamp_utc": "2025-12-18T19:13:51Z",
+      "verification_status": "VERIFIED",
+      "checksum": "sha256:b116e40093e9e31161751e388953a6106c2c495a916241614bb94dd1bf5c104d"
+    },
+    {
+      "filename": "jpl_sbdb_20251218_192722.json",
+      "data_class": "RAW_DATA",
+      "source_agency": "NASA",
+      "retrieval_timestamp_utc": "2025-12-18T19:27:22Z",
+      "verification_status": "VERIFIED",
+      "checksum": "sha256:03899fbaed69528fed408f940082853ef2fe65dd9ace914baf53d56724de7962"
+    },
+    {
+      "filename": "jpl_sbdb_20251218_192757.json",
+      "data_class": "RAW_DATA",
+      "source_agency": "NASA",
+      "retrieval_timestamp_utc": "2025-12-18T19:27:57Z",
+      "verification_status": "VERIFIED",
+      "checksum": "sha256:83b7fefc821bd0633865bc36a83fdeab8d8a7c178a99e68f313908bc41d55778"
+    },
+    {
+      "filename": "jpl_sbdb_20251218_192932.json",
+      "data_class": "RAW_DATA",
+      "source_agency": "NASA",
+      "retrieval_timestamp_utc": "2025-12-18T19:29:32Z",
+      "verification_status": "VERIFIED",
+      "checksum": "sha256:4864c3f0673f828d907546a0b1700597d827a7d79b38c4e4931b517b564d28f6"
+    },
+    {
+      "filename": "jpl_sbdb_20251218_192942.json",
+      "data_class": "RAW_DATA",
+      "source_agency": "NASA",
+      "retrieval_timestamp_utc": "2025-12-18T19:29:42Z",
+      "verification_status": "VERIFIED",
+      "checksum": "sha256:5c1c35f098f53ad0b819406488fdbca9c4f8481fcc14d8ae8428ab66e4733a43"
+    },
+    {
+      "filename": "jpl_sbdb_20251218_201107.json",
+      "data_class": "RAW_DATA",
+      "source_agency": "NASA",
+      "retrieval_timestamp_utc": "2025-12-18T20:11:07Z",
+      "verification_status": "VERIFIED",
+      "checksum": "sha256:4f2feea580898dde46d78575b767522db25c587523334a03afda193148cdec93"
+    },
+    {
+      "filename": "jpl_sbdb_20251218_202539.json",
+      "data_class": "RAW_DATA",
+      "source_agency": "NASA",
+      "retrieval_timestamp_utc": "2025-12-18T20:25:39Z",
+      "verification_status": "VERIFIED",
+      "checksum": "sha256:fc45a0f9055754546def676cc81b0887b54a8193722a4f435b12ff333925470e"
+    },
+    {
+      "filename": "latest_jpl_sbdb.json",
+      "data_class": "SNAPSHOT",
+      "source_agency": "INTERNAL",
+      "retrieval_timestamp_utc": "2026-01-10T16:59:54Z",
+      "verification_status": "VERIFIED",
+      "checksum": "sha256:66dfc5f2553e327f63ca2571c7afb95172f2dea2b688b26cf1762c6cb1c914ba"
+    },
+    {
+      "filename": "official_snapshot_3I_ATLAS_20251219_091518.json",
+      "data_class": "SNAPSHOT",
+      "source_agency": "INTERNAL",
+      "retrieval_timestamp_utc": "2025-12-19T09:15:18Z",
+      "verification_status": "VERIFIED",
+      "checksum": "sha256:bb1fc538492a5b82a5471085274321b716ee2b893b3a207801fa2732f27966a6"
+    },
+    {
+      "filename": "official_snapshot_3I_ATLAS_20251219_105036.json",
+      "data_class": "SNAPSHOT",
+      "source_agency": "INTERNAL",
+      "retrieval_timestamp_utc": "2025-12-19T10:50:36Z",
+      "verification_status": "VERIFIED",
+      "checksum": "sha256:d0cd0542a1ae125eed7748deb3518421bb1a9bc0497aede2a9eee4bdfc57dc8c"
+    },
+    {
+      "filename": "official_snapshot_3I_ATLAS_20251220_033140.json",
+      "data_class": "SNAPSHOT",
+      "source_agency": "INTERNAL",
+      "retrieval_timestamp_utc": "2025-12-20T03:31:40Z",
+      "verification_status": "VERIFIED",
+      "checksum": "sha256:8d1efd15367b289f6e98b5f359c75dadde3e3cda550994a871c03d3a5709f092"
+    },
+    {
+      "filename": "official_snapshot_3I_ATLAS_20251221_034514.json",
+      "data_class": "SNAPSHOT",
+      "source_agency": "INTERNAL",
+      "retrieval_timestamp_utc": "2025-12-21T03:45:14Z",
+      "verification_status": "VERIFIED",
+      "checksum": "sha256:978841a9fe02bd1ab0cccdb5251d5f536fe44e6ec1612d7ac5e118eda6c9cc79"
+    },
+    {
+      "filename": "official_snapshot_3I_ATLAS_20260110_170411.json",
+      "data_class": "SNAPSHOT",
+      "source_agency": "INTERNAL",
+      "retrieval_timestamp_utc": "2026-01-10T17:04:11Z",
+      "verification_status": "VERIFIED",
+      "checksum": "sha256:3514461072420ea1b5b2dae880dd47d26323656929a680e95e22eb222e1f6c5e"
+    },
+    {
+      "filename": "official_snapshot_latest.json",
+      "data_class": "SNAPSHOT",
+      "source_agency": "INTERNAL",
+      "retrieval_timestamp_utc": "2026-01-10T17:04:11Z",
+      "verification_status": "VERIFIED",
+      "checksum": "sha256:3514461072420ea1b5b2dae880dd47d26323656929a680e95e22eb222e1f6c5e"
+    },
+    {
+      "filename": "platforms_registry_20251219_091518.json",
+      "data_class": "DERIVED",
+      "source_agency": "INTERNAL",
+      "retrieval_timestamp_utc": "2025-12-19T09:15:18Z",
+      "verification_status": "VERIFIED",
+      "checksum": "sha256:9064cfeacac8f354475891ffb5a7c0674c2cc62f17729481a10b3a10fb70a7ba"
+    },
+    {
+      "filename": "platforms_registry_20251219_105036.json",
+      "data_class": "DERIVED",
+      "source_agency": "INTERNAL",
+      "retrieval_timestamp_utc": "2025-12-19T10:50:36Z",
+      "verification_status": "VERIFIED",
+      "checksum": "sha256:2e918e87d2c117c009dfdbe5b320756bf7bfaaee875f90f267f7e52a9af5a1ee"
+    },
+    {
+      "filename": "platforms_registry_20251220_033140.json",
+      "data_class": "DERIVED",
+      "source_agency": "INTERNAL",
+      "retrieval_timestamp_utc": "2025-12-20T03:31:40Z",
+      "verification_status": "VERIFIED",
+      "checksum": "sha256:13c3091aaca87b3d1e2871f7636c04c6e5899fa64aac0be27b024e4a7cff08a2"
+    },
+    {
+      "filename": "platforms_registry_20251221_034514.json",
+      "data_class": "DERIVED",
+      "source_agency": "INTERNAL",
+      "retrieval_timestamp_utc": "2025-12-21T03:45:14Z",
+      "verification_status": "VERIFIED",
+      "checksum": "sha256:f0134b8ed03265d2e1325ff706ab5f30571c4d7beb7e4ff3886e9c657c38fdbd"
+    },
+    {
+      "filename": "platforms_registry_20260110_170411.json",
+      "data_class": "DERIVED",
+      "source_agency": "INTERNAL",
+      "retrieval_timestamp_utc": "2026-01-10T17:04:11Z",
+      "verification_status": "VERIFIED",
+      "checksum": "sha256:07b0dbd45c597efe3af12ac1bf9a6ea3d7b9edd21e9bb70c4ba877b9bb6d6e02"
+    }
+  ],
+  "statistics": {
+    "total_files": 19,
+    "by_class": {
+      "RAW_DATA": 7,
+      "SNAPSHOT": 7,
+      "DERIVED": 5
+    },
+    "by_agency": {
+      "NASA": 7,
+      "INTERNAL": 12
+    }
+  }
+}

@@ -1,0 +1,71 @@
+name: Metadata Schema Validation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'data/**'
+      - 'src/metadata_enforcer.py'
+      - 'src/metadata_validator.py'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'data/**'
+      - 'src/metadata_enforcer.py'
+      - 'src/metadata_validator.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-metadata:
+    name: Validate Data Metadata
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      
+      - name: Run metadata validator
+        run: |
+          python src/metadata_validator.py
+      
+      - name: Verify manifest exists
+        run: |
+          if [ ! -f data/DATA_MANIFEST.json ]; then
+            echo "ERROR: DATA_MANIFEST.json not found"
+            exit 1
+          fi
+          echo "✓ Manifest found"
+      
+      - name: Validate manifest statistics
+        run: |
+          python -c "
+          import json
+          with open('data/DATA_MANIFEST.json') as f:
+              manifest = json.load(f)
+          
+          stats = manifest['statistics']
+          print(f'Total files: {stats[\"total_files\"]}')
+          print(f'RAW_DATA: {stats[\"by_class\"][\"RAW_DATA\"]}')
+          print(f'SNAPSHOT: {stats[\"by_class\"][\"SNAPSHOT\"]}')
+          print(f'DERIVED: {stats[\"by_class\"][\"DERIVED\"]}')
+          
+          # Ensure we have classified files
+          if stats['total_files'] == 0:
+              print('ERROR: No files in manifest')
+              exit(1)
+          
+          print('✓ Manifest statistics valid')
+          "

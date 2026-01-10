@@ -93,5 +93,20 @@
   "sbdb_error": {
     "type": "request_error",
     "message": "400 Client Error: Bad Request for url: https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=3I%2FATLAS&orb=1&phys-par=1"
+  },
+  "trizel_metadata": {
+    "data_class": "SNAPSHOT",
+    "source_agency": "INTERNAL",
+    "agency_endpoint": "INTERNAL_PIPELINE",
+    "retrieval_timestamp_utc": "2025-12-19T10:50:36Z",
+    "raw_release_policy": "DERIVED_WORK",
+    "license": "CC-BY-4.0",
+    "verification_status": "VERIFIED",
+    "schema_version": "1.0.0",
+    "last_metadata_update_utc": "2026-01-10T17:04:33Z",
+    "source_raw_data": [
+      "jpl_sbdb_*.json (see manifest for specific files)"
+    ],
+    "checksum": "sha256:d0cd0542a1ae125eed7748deb3518421bb1a9bc0497aede2a9eee4bdfc57dc8c"
   }
 }

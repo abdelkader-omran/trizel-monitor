@@ -186,7 +186,112 @@ this document takes precedence.
 
 ⸻
 
-13. End of Contract
+13. Metadata Requirements (Mandatory)
+
+All data artifacts produced by this system **MUST** include the following metadata fields:
+
+### 13.1 Required Metadata Schema
+
+Each data file SHALL contain a `trizel_metadata` object with:
+
+- **data_class** (string, enum): One of `RAW_DATA`, `SNAPSHOT`, `DERIVED`
+- **source_agency** (string): Official space agency or `INTERNAL`
+- **agency_endpoint** (string): Verifiable API endpoint or data source
+- **retrieval_timestamp_utc** (string): ISO-8601 UTC timestamp
+- **raw_release_policy** (string): Data release policy
+- **checksum** (string): Format `algorithm:hash` (e.g., `sha256:abc123...`)
+- **license** (string): Data license (e.g., `CC0-1.0`, `CC-BY-4.0`)
+- **verification_status** (string, enum): One of `VERIFIED`, `PENDING`, `UNVERIFIED`, `FAILED`
+
+### 13.2 Whitelisted Space Agencies
+
+RAW_DATA may ONLY originate from:
+- NASA (United States)
+- ESA (European Space Agency)
+- CNSA (China National Space Administration)
+- Roscosmos (Russian Space Agency)
+- JAXA (Japan Aerospace Exploration Agency)
+- MPC (Minor Planet Center - IAU)
+
+### 13.3 Classification Rules
+
+- **RAW_DATA**: Unmodified data from official space agencies
+  - MUST have whitelisted `source_agency`
+  - MUST have verifiable `agency_endpoint`
+  - MUST have `verification_status: "VERIFIED"`
+
+- **SNAPSHOT**: Timestamped system state captures
+  - MUST reference at least one RAW_DATA source
+  - MAY have `source_agency: "INTERNAL"`
+
+- **DERIVED**: Processed or computed data
+  - MUST include `processing_pipeline` field
+  - MUST document source data
+
+### 13.4 Validation and Enforcement
+
+- Metadata compliance is enforced via CI/CD
+- Files lacking required metadata WILL fail validation
+- No manual override permitted
+- See `METADATA_SCHEMA.md` for complete specification
+
+### 13.5 Archival Manifest
+
+The system SHALL generate a machine-readable manifest:
+- File: `data/DATA_MANIFEST.json`
+- Contains: Classification, checksums, statistics
+- Updated: On every metadata enforcement run
+
+⸻
+
+14. Zenodo Archival Alignment
+
+For long-term scientific archival (e.g., Zenodo):
+
+### 14.1 Archive Organization
+
+Zenodo releases SHALL clearly distinguish:
+- **RAW DATA archives** — Original agency data
+- **SNAPSHOT collections** — Timestamped aggregations
+- **DERIVED datasets** — Processed outputs
+
+### 14.2 DOI Continuity
+
+- No deletion of published DOIs
+- No overwrite of existing records
+- Versioning through Zenodo's version mechanism
+- Each version preserves data classification metadata
+
+### 14.3 Archive Metadata
+
+Each Zenodo record SHALL include:
+- Reference to `DATA_MANIFEST.json`
+- Clear indication of data_class for all files
+- Links to original agency sources for RAW_DATA
+- Checksums for integrity verification
+
+⸻
+
+15. Downstream Safety
+
+### 15.1 Read-Only Consumption
+
+Downstream repositories (e.g., AUTO-DZ-ACT-3I-ATLAS-DAILY) SHALL:
+- Consume data in read-only mode
+- NOT reclassify RAW_DATA as SNAPSHOT or DERIVED
+- NOT modify metadata fields
+- Preserve provenance chain
+
+### 15.2 Immutable Classification
+
+Once a file is classified as RAW_DATA and verified:
+- Classification CANNOT be changed downstream
+- Metadata MUST be preserved
+- Checksums MUST remain valid
+
+⸻
+
+16. End of Contract
 
 This file intentionally contains no executable logic.
 

@@ -1,9 +1,37 @@
 {
-    "object": "ExampleObject",
+  "trizel_metadata": {
+    "data_class": "RAW_DATA",
+    "source_agency": "NASA",
+    "agency_endpoint": "https://ssd-api.jpl.nasa.gov/sbdb.api",
+    "retrieval_timestamp_utc": "2025-12-18T19:29:42Z",
+    "raw_release_policy": "NASA_OPEN_DATA",
+    "license": "CC0-1.0",
+    "verification_status": "VERIFIED",
+    "schema_version": "1.0.0",
+    "last_metadata_update_utc": "2026-01-10T17:04:33Z",
+    "checksum": "sha256:5c1c35f098f53ad0b819406488fdbca9c4f8481fcc14d8ae8428ab66e4733a43"
+  },
+  "data": {
+    "trizel_metadata": {
+      "data_class": "RAW_DATA",
+      "source_agency": "NASA",
+      "agency_endpoint": "https://ssd-api.jpl.nasa.gov/sbdb.api",
+      "retrieval_timestamp_utc": "2025-12-18T19:29:42Z",
+      "raw_release_policy": "NASA_OPEN_DATA",
+      "license": "CC0-1.0",
+      "verification_status": "VERIFIED",
+      "schema_version": "1.0.0",
+      "last_metadata_update_utc": "2026-01-10T16:59:54Z",
+      "checksum": "sha256:6a58ef7a00d5323f44686970943a6211f5af7aaaa5f3983902de718de2609ef4"
+    },
     "data": {
+      "object": "ExampleObject",
+      "data": {
         "property1": "value1",
         "property2": "value2"
-    },
-    "source": "NASA / JPL SBDB",
-    "retrieved_utc": "2025-12-18 19:29:42"
+      },
+      "source": "NASA / JPL SBDB",
+      "retrieved_utc": "2025-12-18 19:29:42"
+    }
+  }
 }

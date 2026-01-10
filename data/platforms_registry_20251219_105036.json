@@ -1,75 +1,105 @@
 {
-  "intent": "Evidence & archive targets (official platforms). Not all are machine-fetchable via API.",
-  "categories": {
-    "authoritative_orbit_and_astrometry": [
-      {
-        "name": "Minor Planet Center (MPC)",
-        "role": "IAU clearinghouse for astrometry/orbits",
-        "type": "registry"
-      },
-      {
-        "name": "NASA/JPL SSD SBDB",
-        "role": "public small-body database API",
-        "type": "api"
-      },
-      {
-        "name": "NASA/JPL Horizons",
-        "role": "ephemerides / vectors / observer geometry",
-        "type": "service"
-      }
-    ],
-    "major_space_agencies_and_missions": [
-      {
-        "name": "ESA",
-        "role": "missions + archives (e.g., XMM-Newton)",
-        "type": "agency"
-      },
-      {
-        "name": "ESO",
-        "role": "ground-based observatory archives (e.g., VLT instruments)",
-        "type": "observatory"
-      },
-      {
-        "name": "JAXA",
-        "role": "missions + archives (e.g., XRISM collaboration context)",
-        "type": "agency"
-      },
-      {
-        "name": "CNSA",
-        "role": "missions/announcements; data availability varies by release channel",
-        "type": "agency"
-      },
-      {
-        "name": "NASA",
-        "role": "missions + archives (e.g., HST/JWST where relevant)",
-        "type": "agency"
-      }
-    ],
-    "space_and_ground_archives": [
-      {
-        "name": "MAST (HST/JWST)",
-        "role": "space telescope archive",
-        "type": "archive"
-      },
-      {
-        "name": "ESO Science Archive",
-        "role": "ESO observational archive",
-        "type": "archive"
-      },
-      {
-        "name": "HEASARC",
-        "role": "high-energy mission archive gateway (where applicable)",
-        "type": "archive"
-      },
-      {
-        "name": "XMM-Newton Science Archive (XSA)",
-        "role": "XMM data archive (ESA)",
-        "type": "archive"
-      }
-    ]
+  "trizel_metadata": {
+    "data_class": "DERIVED",
+    "source_agency": "INTERNAL",
+    "agency_endpoint": "INTERNAL_PIPELINE",
+    "retrieval_timestamp_utc": "2025-12-19T10:50:36Z",
+    "raw_release_policy": "DERIVED_WORK",
+    "license": "CC-BY-4.0",
+    "verification_status": "VERIFIED",
+    "schema_version": "1.0.0",
+    "last_metadata_update_utc": "2026-01-10T17:04:33Z",
+    "processing_pipeline": "TRIZEL Monitor v1.0",
+    "checksum": "sha256:2e918e87d2c117c009dfdbe5b320756bf7bfaaee875f90f267f7e52a9af5a1ee"
   },
-  "policy": {
-    "verification_first": "Every claim used by Auto DZ ACT should cite a primary dataset record (ObsID/DOI/solution id).",
-    "no_unverifiable_claims": "If a platform has no public DOI/ObsID/product, it is tracked as 'media-only' until operationalized."
+  "data": {
+    "trizel_metadata": {
+      "data_class": "DERIVED",
+      "source_agency": "INTERNAL",
+      "agency_endpoint": "INTERNAL_PIPELINE",
+      "retrieval_timestamp_utc": "2025-12-19T10:50:36Z",
+      "raw_release_policy": "DERIVED_WORK",
+      "license": "CC-BY-4.0",
+      "verification_status": "VERIFIED",
+      "schema_version": "1.0.0",
+      "last_metadata_update_utc": "2026-01-10T16:59:54Z",
+      "processing_pipeline": "TRIZEL Monitor v1.0",
+      "checksum": "sha256:734262becd7d9bd80aebcd84fda4e8244229b0ef830215ace3029a2b3ba8d672"
+    },
+    "data": {
+      "intent": "Evidence & archive targets (official platforms). Not all are machine-fetchable via API.",
+      "categories": {
+        "authoritative_orbit_and_astrometry": [
+          {
+            "name": "Minor Planet Center (MPC)",
+            "role": "IAU clearinghouse for astrometry/orbits",
+            "type": "registry"
+          },
+          {
+            "name": "NASA/JPL SSD SBDB",
+            "role": "public small-body database API",
+            "type": "api"
+          },
+          {
+            "name": "NASA/JPL Horizons",
+            "role": "ephemerides / vectors / observer geometry",
+            "type": "service"
+          }
+        ],
+        "major_space_agencies_and_missions": [
+          {
+            "name": "ESA",
+            "role": "missions + archives (e.g., XMM-Newton)",
+            "type": "agency"
+          },
+          {
+            "name": "ESO",
+            "role": "ground-based observatory archives (e.g., VLT instruments)",
+            "type": "observatory"
+          },
+          {
+            "name": "JAXA",
+            "role": "missions + archives (e.g., XRISM collaboration context)",
+            "type": "agency"
+          },
+          {
+            "name": "CNSA",
+            "role": "missions/announcements; data availability varies by release channel",
+            "type": "agency"
+          },
+          {
+            "name": "NASA",
+            "role": "missions + archives (e.g., HST/JWST where relevant)",
+            "type": "agency"
+          }
+        ],
+        "space_and_ground_archives": [
+          {
+            "name": "MAST (HST/JWST)",
+            "role": "space telescope archive",
+            "type": "archive"
+          },
+          {
+            "name": "ESO Science Archive",
+            "role": "ESO observational archive",
+            "type": "archive"
+          },
+          {
+            "name": "HEASARC",
+            "role": "high-energy mission archive gateway (where applicable)",
+            "type": "archive"
+          },
+          {
+            "name": "XMM-Newton Science Archive (XSA)",
+            "role": "XMM data archive (ESA)",
+            "type": "archive"
+          }
+        ]
+      },
+      "policy": {
+        "verification_first": "Every claim used by Auto DZ ACT should cite a primary dataset record (ObsID/DOI/solution id).",
+        "no_unverifiable_claims": "If a platform has no public DOI/ObsID/product, it is tracked as 'media-only' until operationalized."
+      }
+    }
   }
 }

@@ -1,6 +1,7 @@
 import os
 import re
 import json
+import hashlib
 import requests
 from datetime import datetime
 from typing import Any, Dict, Optional
@@ -61,6 +62,102 @@ def safe_slug(s: str) -> str:
 def write_json(path: str, payload: Dict[str, Any]) -> None:
     with open(path, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2, ensure_ascii=False)
+
+
+def compute_checksum(filepath: str) -> str:
+    """Compute SHA-256 checksum of a file."""
+    hash_obj = hashlib.sha256()
+    with open(filepath, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_obj.update(chunk)
+    return f"sha256:{hash_obj.hexdigest()}"
+
+
+def add_trizel_metadata(
+    data: Dict[str, Any],
+    data_class: str,
+    source_agency: str,
+    agency_endpoint: str,
+    retrieval_timestamp_utc: str,
+    raw_release_policy: str,
+    license_type: str,
+    **kwargs
+) -> Dict[str, Any]:
+    """
+    Wrap data with TRIZEL metadata schema for scientific provenance.
+    
+    Args:
+        data: The data payload to wrap
+        data_class: One of RAW_DATA, SNAPSHOT, DERIVED
+        source_agency: Official space agency or INTERNAL
+        agency_endpoint: API endpoint or source identifier
+        retrieval_timestamp_utc: ISO-8601 UTC timestamp
+        raw_release_policy: Data release policy
+        license_type: Data license
+        **kwargs: Additional metadata fields
+    
+    Returns:
+        Dictionary with trizel_metadata and data fields
+    """
+    metadata = {
+        "data_class": data_class,
+        "source_agency": source_agency,
+        "agency_endpoint": agency_endpoint,
+        "retrieval_timestamp_utc": retrieval_timestamp_utc,
+        "raw_release_policy": raw_release_policy,
+        "license": license_type,
+        "verification_status": "VERIFIED",
+        "schema_version": "1.0.0",
+        "last_metadata_update_utc": utc_now_iso(),
+    }
+    
+    # Add optional fields
+    for key, value in kwargs.items():
+        metadata[key] = value
+    
+    return {
+        "trizel_metadata": metadata,
+        "data": data
+    }
+
+
+def write_json_with_metadata(
+    path: str,
+    payload: Dict[str, Any],
+    data_class: str,
+    source_agency: str,
+    agency_endpoint: str,
+    retrieval_timestamp_utc: str,
+    raw_release_policy: str,
+    license_type: str,
+    **kwargs
+) -> None:
+    """
+    Write JSON file with TRIZEL metadata and compute checksum.
+    """
+    # Wrap with metadata (but don't include checksum yet)
+    wrapped = add_trizel_metadata(
+        payload,
+        data_class,
+        source_agency,
+        agency_endpoint,
+        retrieval_timestamp_utc,
+        raw_release_policy,
+        license_type,
+        **kwargs
+    )
+    
+    # Write initial file
+    write_json(path, wrapped)
+    
+    # Compute checksum
+    checksum = compute_checksum(path)
+    
+    # Add checksum to metadata
+    wrapped["trizel_metadata"]["checksum"] = checksum
+    
+    # Final write with checksum
+    write_json(path, wrapped)
 
 
 def http_get_json(url: str, params: Dict[str, Any], timeout: int) -> Dict[str, Any]:
@@ -209,10 +306,46 @@ def main() -> None:
     latest_path = os.path.join(DATA_DIR, "official_snapshot_latest.json")
     registry_path = os.path.join(DATA_DIR, f"platforms_registry_{file_stamp}.json")
 
-    # 5) Write outputs
-    write_json(timestamped_path, output)
-    write_json(latest_path, output)
-    write_json(registry_path, output["platforms_registry"])
+    # 5) Write outputs with TRIZEL metadata
+    # Snapshots: Aggregated data with raw data references
+    write_json_with_metadata(
+        timestamped_path,
+        output,
+        data_class="SNAPSHOT",
+        source_agency="INTERNAL",
+        agency_endpoint="INTERNAL_PIPELINE",
+        retrieval_timestamp_utc=retrieved_utc,
+        raw_release_policy="DERIVED_WORK",
+        license_type="CC-BY-4.0",
+        source_raw_data=["jpl_sbdb_*.json (NASA/JPL SBDB API responses)"],
+        object_designation=TARGET_OBJECT,
+    )
+    
+    write_json_with_metadata(
+        latest_path,
+        output,
+        data_class="SNAPSHOT",
+        source_agency="INTERNAL",
+        agency_endpoint="INTERNAL_PIPELINE",
+        retrieval_timestamp_utc=retrieved_utc,
+        raw_release_policy="DERIVED_WORK",
+        license_type="CC-BY-4.0",
+        source_raw_data=["jpl_sbdb_*.json (NASA/JPL SBDB API responses)"],
+        object_designation=TARGET_OBJECT,
+    )
+    
+    # Derived: Platforms registry
+    write_json_with_metadata(
+        registry_path,
+        output["platforms_registry"],
+        data_class="DERIVED",
+        source_agency="INTERNAL",
+        agency_endpoint="INTERNAL_PIPELINE",
+        retrieval_timestamp_utc=retrieved_utc,
+        raw_release_policy="DERIVED_WORK",
+        license_type="CC-BY-4.0",
+        processing_pipeline="TRIZEL Monitor v1.0",
+    )
 
     # 6) Console
     print("[OK] Official data snapshot written:")
