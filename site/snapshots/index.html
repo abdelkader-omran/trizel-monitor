@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Snapshot catalog - TRIZEL Monitor">
+  <title>Snapshots - TRIZEL Monitor</title>
+  <link rel="stylesheet" href="../../assets/css/trizel-monitor.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
+  <header role="banner">
+    <h1 class="site-title">TRIZEL Monitor - Snapshot Catalog</h1>
+    <p class="site-description">
+      API snapshots and computed values (NOT RAW DATA)
+    </p>
+    
+    <nav role="navigation" aria-label="Main navigation">
+      <ul>
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="../status/index.html">Status</a></li>
+        <li><a href="../agencies/index.html">Agencies</a></li>
+        <li><a href="../raw/index.html">RAW Data</a></li>
+        <li><a href="../snapshots/index.html" aria-current="page">Snapshots</a></li>
+        <li><a href="../policies/index.html">Policies</a></li>
+        <li><a href="../sitemap/index.html">Sitemap</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content" role="main">
+    
+    <div class="alert alert-warning">
+      <strong>CRITICAL NOTICE:</strong> Snapshots are NOT RAW DATA. They contain computed values from API responses and have NO SCIENTIFIC VALUE ALONE for raw data analysis. Use RAW DATA for scientific reproducibility.
+    </div>
+
+    <section class="section">
+      <h2 class="section-title">What are Snapshots?</h2>
+      <div class="card">
+        <p><span class="badge badge-snapshot">SNAPSHOT</span> data includes:</p>
+        <ul>
+          <li>API responses from official agencies (e.g., JPL SBDB API)</li>
+          <li>Computed orbital elements</li>
+          <li>Real-time queries</li>
+          <li>Summary statistics</li>
+        </ul>
+        
+        <p><strong>Snapshots are NOT:</strong></p>
+        <ul>
+          <li>Original archival files</li>
+          <li>Direct downloads from mission archives</li>
+          <li>Raw observational data</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Current Snapshot Inventory</h2>
+      
+      <div class="card">
+        <p><strong>Total Snapshot Files:</strong> <span data-status="data_counts.snapshot_total">0</span></p>
+        <p><strong>Last Snapshot Update:</strong> <span data-status="last_updates.last_snapshot_update_utc">-</span></p>
+      </div>
+      
+      <table role="table">
+        <thead>
+          <tr>
+            <th scope="col">Filename</th>
+            <th scope="col">Classification</th>
+            <th scope="col">Agency</th>
+            <th scope="col">Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>snapshot_3I_ATLAS_latest.json</code></td>
+            <td><span class="badge badge-snapshot">SNAPSHOT</span></td>
+            <td>NASA</td>
+            <td>Latest JPL SBDB API response</td>
+          </tr>
+          <tr>
+            <td><code>snapshot_3I_ATLAS_20260110_*.json</code></td>
+            <td><span class="badge badge-snapshot">SNAPSHOT</span></td>
+            <td>NASA</td>
+            <td>Timestamped JPL SBDB API responses</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">JPL SBDB API Snapshots</h2>
+      <div class="card">
+        <p><strong>Source:</strong> <a href="https://ssd-api.jpl.nasa.gov/sbdb.api">https://ssd-api.jpl.nasa.gov/sbdb.api</a></p>
+        <p><strong>Classification:</strong> <span class="badge badge-snapshot">SNAPSHOT</span></p>
+        <p><strong>Reason:</strong> API responses contain computed orbital elements, not original archival files.</p>
+        
+        <p><strong>Metadata Structure:</strong></p>
+        <pre><code>{
+  "trizel_metadata": {
+    "data_classification": "SNAPSHOT",
+    "visual_attributes": {
+      "color": "orange",
+      "icon": "⚠",
+      "label": "SNAPSHOT – NO SCIENTIFIC VALUE ALONE"
+    }
+  }
+}</code></pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Scientific Usage</h2>
+      <div class="alert alert-warning">
+        For scientific reproducibility and peer review, researchers should use <a href="../raw/index.html">RAW DATA</a> from official mission archives, not SNAPSHOT files.
+      </div>
+      
+      <p>Snapshots may be useful for:</p>
+      <ul>
+        <li>Monitoring changes in computed orbital solutions over time</li>
+        <li>Quick reference for current orbital parameters</li>
+        <li>Cross-referencing with RAW observational data</li>
+      </ul>
+      
+      <p>However, they must NOT be used as primary evidence in scientific publications without citing the original RAW data sources.</p>
+    </section>
+
+  </main>
+
+  <footer role="contentinfo">
+    <div class="communication-policy">
+      <strong>Communication Policy:</strong> 
+      TRIZEL-AI does not provide direct messaging. All communication is conducted through verifiable channels: 
+      <strong>GitHub</strong> (issues, pull requests, discussions), 
+      <strong>ORCID</strong> (research profiles), and 
+      <strong>DOI-linked archival records</strong> (Zenodo, OSF, HAL).
+    </div>
+    
+    <p style="margin-top: 1rem;">
+      <strong>Data Source:</strong> <code>data/snapshot_*.json</code><br>
+      <strong>Repository:</strong> <a href="https://github.com/abdelkader-omran/trizel-monitor">github.com/abdelkader-omran/trizel-monitor</a>
+    </p>
+  </footer>
+
+  <script src="../../assets/js/trizel-monitor.js"></script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="RAW data catalog - TRIZEL Monitor">
+  <title>RAW Data - TRIZEL Monitor</title>
+  <link rel="stylesheet" href="../../assets/css/trizel-monitor.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
+  <header role="banner">
+    <h1 class="site-title">TRIZEL Monitor - RAW Data Catalog</h1>
+    <p class="site-description">
+      Verified RAW data files with checksums and provenance (downloadable when permitted)
+    </p>
+    
+    <nav role="navigation" aria-label="Main navigation">
+      <ul>
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="../status/index.html">Status</a></li>
+        <li><a href="../agencies/index.html">Agencies</a></li>
+        <li><a href="../raw/index.html" aria-current="page">RAW Data</a></li>
+        <li><a href="../snapshots/index.html">Snapshots</a></li>
+        <li><a href="../policies/index.html">Policies</a></li>
+        <li><a href="../sitemap/index.html">Sitemap</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content" role="main">
+    
+    <section class="section">
+      <h2 class="section-title">RAW Data Requirements</h2>
+      <div class="alert alert-info">
+        Data classified as <span class="badge badge-raw-data">RAW DATA</span> MUST meet ALL of the following requirements:
+      </div>
+      
+      <div class="card">
+        <ol>
+          <li><strong>Direct download:</strong> Directly downloadable file from official agency archive</li>
+          <li><strong>Official agency:</strong> Source must be from approved whitelist (NASA, ESA, JAXA, MPC)</li>
+          <li><strong>Not API-only:</strong> Must be archival file, not API response or computed values</li>
+          <li><strong>Provenance:</strong> Source URL, license/policy reference documented</li>
+          <li><strong>Checksum:</strong> SHA-256 checksum computed and verified</li>
+          <li><strong>Delay policy:</strong> Data release timing explicitly stated</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Current RAW Data Inventory</h2>
+      
+      <div class="card">
+        <p><strong>Total RAW Data Files:</strong> <span data-status="data_counts.raw_data_total">0</span></p>
+        <p><strong>Last RAW Update:</strong> <span data-status="last_updates.last_raw_update_utc">never</span></p>
+      </div>
+      
+      <p><em>
+        RAW data files will appear here once downloaded from official agency archives.
+        Currently, the system has the infrastructure in place but no RAW data files have been downloaded yet.
+      </em></p>
+      
+      <p>
+        <strong>Note:</strong> CNSA and ROSCOSMOS are in "Monitoring" status because publicly accessible
+        RAW data downloads are not available without institutional credentials. This is an accurate
+        reflection of their data access policies, not a system limitation.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Download Infrastructure</h2>
+      <div class="card">
+        <p>The RAW data download system includes:</p>
+        <ul>
+          <li>Direct file download with content verification</li>
+          <li>SHA-256 checksum computation</li>
+          <li>Sidecar metadata (.meta.json) with provenance</li>
+          <li>Polite rate limiting (2+ seconds between requests)</li>
+          <li>Retry logic for transient failures</li>
+          <li>Storage structure: <code>data/raw/&lt;agency_id&gt;/&lt;dataset_id&gt;/</code></li>
+        </ul>
+        
+        <p>See <a href="https://github.com/abdelkader-omran/trizel-monitor/tree/main/src/raw_download">src/raw_download/</a> for implementation details.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer role="contentinfo">
+    <div class="communication-policy">
+      <strong>Communication Policy:</strong> 
+      TRIZEL-AI does not provide direct messaging. All communication is conducted through verifiable channels: 
+      <strong>GitHub</strong> (issues, pull requests, discussions), 
+      <strong>ORCID</strong> (research profiles), and 
+      <strong>DOI-linked archival records</strong> (Zenodo, OSF, HAL).
+    </div>
+    
+    <p style="margin-top: 1rem;">
+      <strong>Data Source:</strong> <code>data/raw/</code><br>
+      <strong>Repository:</strong> <a href="https://github.com/abdelkader-omran/trizel-monitor">github.com/abdelkader-omran/trizel-monitor</a>
+    </p>
+  </footer>
+
+  <script src="../../assets/js/trizel-monitor.js"></script>
+</body>
+</html>
