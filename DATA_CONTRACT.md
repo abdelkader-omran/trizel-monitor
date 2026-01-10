@@ -145,9 +145,8 @@ Each data file SHALL conform to the following schema with EXACTLY ONE metadata b
     "resolved_designation": "string | null - API-returned designation",
     "retrieved_utc": "ISO-8601 UTC string",
     "checksum": {
-      "algorithm": "sha256",
-      "value": "hex string - required",
-      "sha512": "hex string - optional"
+      "algorithm": "sha256 | sha512",
+      "value": "hex string - required"
     },
     "provenance": {
       "source_url": "string - API endpoint or archive URL",
