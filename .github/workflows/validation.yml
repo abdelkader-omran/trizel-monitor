@@ -1,0 +1,70 @@
+name: Data Governance Validation
+
+on:
+  push:
+    branches: [ main, "copilot/**" ]
+    paths:
+      - 'data/**'
+      - 'src/**'
+      - '.github/workflows/validation.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'data/**'
+      - 'src/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run Data Governance Validator
+        id: validate
+        run: |
+          echo "Running TRIZEL Data Governance Validator..."
+          python src/validate_data.py
+          
+      - name: Check for MD5 in codebase
+        run: |
+          echo "Checking for forbidden MD5 usage..."
+          # Check for MD5 usage in data files (NOT in validator/docs where we mention it's forbidden)
+          if grep -i '"md5"' --include="*.json" data/ 2>/dev/null; then
+            echo "ERROR: MD5 checksums found in data files (FORBIDDEN)"
+            echo "Use SHA-256 only. See DATA_CONTRACT.md section 7."
+            exit 1
+          fi
+          # Check for MD5 imports/usage in code (NOT in validator where we check for it)
+          if grep -E "hashlib\.md5|import.*md5" --include="*.py" src/main.py 2>/dev/null; then
+            echo "ERROR: MD5 usage found in main code (FORBIDDEN)"
+            echo "Use SHA-256 only. See DATA_CONTRACT.md section 7."
+            exit 1
+          fi
+          echo "✓ No forbidden MD5 usage found"
+
+      - name: Validation Summary
+        if: always()
+        run: |
+          echo "=========================================="
+          echo "Data Governance Validation Complete"
+          echo "=========================================="
+          echo "See DATA_CONTRACT.md and ISSUE_AUTHORITATIVE_DATA_GOVERNANCE.md"
+          echo "for complete specification."

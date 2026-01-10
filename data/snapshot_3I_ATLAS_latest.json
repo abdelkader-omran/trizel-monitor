@@ -1,0 +1,35 @@
+{
+  "trizel_metadata": {
+    "project": "TRIZEL Monitor",
+    "pipeline": "Daily Official Data Monitor",
+    "version": "2.0.0",
+    "data_classification": "SNAPSHOT",
+    "source_agency": "NASA",
+    "query_designation": "3I/ATLAS",
+    "resolved_designation": null,
+    "retrieved_utc": "2026-01-10T18:56:17Z",
+    "checksum": {
+      "algorithm": "sha256",
+      "value": "2592e0e9e755878456e51cd1241c4731a0097e5dc3be3ec7f443c5fcb6e58749"
+    },
+    "provenance": {
+      "source_url": "https://ssd-api.jpl.nasa.gov/sbdb.api",
+      "source_type": "api",
+      "release_policy": "Public API - computed values updated as orbital solutions are refined"
+    },
+    "visual_attributes": {
+      "color": "orange",
+      "icon": "⚠",
+      "label": "SNAPSHOT – NO SCIENTIFIC VALUE ALONE"
+    },
+    "integrity": {
+      "has_data_payload": false,
+      "has_error": true,
+      "validation_status": "pending"
+    }
+  },
+  "data": {
+    "sbdb_response": {},
+    "error_type": "request_exception"
+  }
+}
