@@ -1,0 +1,29 @@
+{
+  "build_metadata": {
+    "version": "3.0.0",
+    "build_hash": "35005a9",
+    "deploy_utc": "2026-01-10T19:32:52Z",
+    "generator": "scripts/generate_build_metadata.py",
+    "schema_version": "1.0.0"
+  },
+  "data_counts": {
+    "raw_data_total": 0,
+    "raw_data_by_agency": {},
+    "snapshot_total": 4
+  },
+  "agency_counts": {
+    "active": 4,
+    "monitoring": 2,
+    "limited": 0,
+    "total": 6
+  },
+  "last_updates": {
+    "last_raw_update_utc": "never",
+    "last_snapshot_update_utc": "2026-01-10T19:20:42Z"
+  },
+  "system_status": {
+    "automation": "Active",
+    "data_governance_version": "3.0.0",
+    "validation": "Enforced via CI"
+  }
+}

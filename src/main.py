@@ -44,7 +44,7 @@ TARGET_OBJECT = os.getenv("TARGET_OBJECT", "3I/ATLAS").strip()
 HTTP_TIMEOUT_SEC = int(os.getenv("HTTP_TIMEOUT_SEC", "30"))
 
 # Data governance version
-DATA_CONTRACT_VERSION = "2.0.0"
+DATA_CONTRACT_VERSION = "3.0.0"
 
 
 # ----------------------------

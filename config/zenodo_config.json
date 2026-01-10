@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "description": "Zenodo DOI reference configuration for ATLAS daily snapshots",
+  "latest_release_doi": null,
+  "last_updated_utc": "2026-01-10T19:30:00Z",
+  "repository": "abdelkader-omran/AUTO-DZ-ACT-3I-ATLAS-DAILY",
+  "notes": [
+    "This file stores the latest Zenodo DOI reference for ATLAS daily snapshots",
+    "DOIs are NOT hardcoded in source code to allow updates without code changes",
+    "Update this file when new Zenodo releases are published",
+    "Use scripts/ingest_atlas_snapshots.py --update-doi to update programmatically"
+  ],
+  "archival_records": [
+    {
+      "description": "Placeholder for Zenodo archival records",
+      "doi": null,
+      "publication_date": null,
+      "version": null
+    }
+  ]
+}

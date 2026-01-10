@@ -1,10 +1,21 @@
 # TRIZEL Monitor
 
+**Version:** 3.0.0  
+**Data Governance:** v3.0.0
+
 **TRIZEL Monitor** is an automated scientific monitoring system designed to track, collect, and archive data related to the interstellar object **3I/ATLAS**.
 
 The project is built to operate with **zero daily manual intervention**, relying on GitHub Actions to execute scheduled and on-demand monitoring workflows.
 
-**Data Governance Version:** 2.0.0 (See [DATA_CONTRACT.md](DATA_CONTRACT.md) and [ISSUE_AUTHORITATIVE_DATA_GOVERNANCE.md](ISSUE_AUTHORITATIVE_DATA_GOVERNANCE.md))
+**See:** [CHANGELOG.md](CHANGELOG.md) for version history and [DATA_CONTRACT.md](DATA_CONTRACT.md) for authoritative data contract.
+
+---
+
+## Backward Compatibility Notice
+
+**Versions < 3.0.0** may contain snapshot data without explicit RAW_DATA guarantees.
+
+For scientific reproducibility and verifiable raw data provenance, **use v3.0.0 or later**.
 
 ---
 

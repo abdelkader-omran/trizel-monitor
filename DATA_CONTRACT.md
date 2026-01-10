@@ -1,7 +1,7 @@
 # DATA_CONTRACT.md  
 **TRIZEL Monitor — Official Data Contract**
 
-**Version:** 2.0.0  
+**Version:** 3.0.0  
 **Status:** AUTHORITATIVE  
 **Last Updated:** 2026-01-10
 

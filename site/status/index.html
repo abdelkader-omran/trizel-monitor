@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="TRIZEL Monitor operational status - facts only, zero interpretation">
+  <title>Status - TRIZEL Monitor</title>
+  <link rel="stylesheet" href="../../assets/css/trizel-monitor.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
+  <header role="banner">
+    <h1 class="site-title">TRIZEL Monitor - Status</h1>
+    <p class="site-description">
+      Operational status and system metrics (facts only, zero interpretation)
+    </p>
+    
+    <nav role="navigation" aria-label="Main navigation">
+      <ul>
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="../status/index.html" aria-current="page">Status</a></li>
+        <li><a href="../agencies/index.html">Agencies</a></li>
+        <li><a href="../raw/index.html">RAW Data</a></li>
+        <li><a href="../snapshots/index.html">Snapshots</a></li>
+        <li><a href="../policies/index.html">Policies</a></li>
+        <li><a href="../sitemap/index.html">Sitemap</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content" role="main">
+    
+    <section class="section">
+      <h2 class="section-title">System Version</h2>
+      <div class="card">
+        <table role="table">
+          <tbody>
+            <tr>
+              <td><strong>Version</strong></td>
+              <td><span data-version>3.0.0</span></td>
+            </tr>
+            <tr>
+              <td><strong>Build Hash</strong></td>
+              <td><code><span data-status="build_metadata.build_hash">-</span></code></td>
+            </tr>
+            <tr>
+              <td><strong>Deploy UTC</strong></td>
+              <td><span data-status="build_metadata.deploy_utc">-</span></td>
+            </tr>
+            <tr>
+              <td><strong>Data Governance</strong></td>
+              <td><span data-status="system_status.data_governance_version">-</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Data Inventory</h2>
+      <div class="card">
+        <table role="table">
+          <tbody>
+            <tr>
+              <td><strong>RAW Data Files</strong></td>
+              <td><span data-status="data_counts.raw_data_total">-</span></td>
+            </tr>
+            <tr>
+              <td><strong>Snapshot Files</strong></td>
+              <td><span data-status="data_counts.snapshot_total">-</span></td>
+            </tr>
+            <tr>
+              <td><strong>Last RAW Update</strong></td>
+              <td><span data-status="last_updates.last_raw_update_utc">-</span></td>
+            </tr>
+            <tr>
+              <td><strong>Last Snapshot Update</strong></td>
+              <td><span data-status="last_updates.last_snapshot_update_utc">-</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Agency Connectivity</h2>
+      <div class="card">
+        <table role="table">
+          <tbody>
+            <tr>
+              <td><strong>Total Agencies</strong></td>
+              <td><span data-status="agency_counts.total">-</span></td>
+            </tr>
+            <tr>
+              <td><strong>Active (with RAW data access)</strong></td>
+              <td><span data-status="agency_counts.active">-</span></td>
+            </tr>
+            <tr>
+              <td><strong>Monitoring (limited access)</strong></td>
+              <td><span data-status="agency_counts.monitoring">-</span></td>
+            </tr>
+            <tr>
+              <td><strong>Limited</strong></td>
+              <td><span data-status="agency_counts.limited">-</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <p>
+        <a href="../agencies/index.html">View detailed agency registry →</a>
+      </p>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">System Status</h2>
+      <div class="card">
+        <table role="table">
+          <tbody>
+            <tr>
+              <td><strong>Automation</strong></td>
+              <td><span data-status="system_status.automation">-</span></td>
+            </tr>
+            <tr>
+              <td><strong>Validation</strong></td>
+              <td><span data-status="system_status.validation">-</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Classification Rules</h2>
+      <div class="alert alert-info">
+        All data is classified using strict scientific rules with zero interpretation:
+      </div>
+      
+      <table role="table">
+        <thead>
+          <tr>
+            <th scope="col">Classification</th>
+            <th scope="col">Count</th>
+            <th scope="col">Requirements</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-raw-data">RAW DATA</span></td>
+            <td><span data-status="data_counts.raw_data_total">-</span></td>
+            <td>Direct download, official agency, SHA-256, provenance</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-snapshot">SNAPSHOT</span></td>
+            <td><span data-status="data_counts.snapshot_total">-</span></td>
+            <td>API responses, computed values (NO SCIENTIFIC VALUE ALONE)</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-derived">DERIVED</span></td>
+            <td>0</td>
+            <td>Processed, analyzed, or transformed data</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+
+  <footer role="contentinfo">
+    <div class="communication-policy">
+      <strong>Communication Policy:</strong> 
+      TRIZEL-AI does not provide direct messaging. All communication is conducted through verifiable channels: 
+      <strong>GitHub</strong> (issues, pull requests, discussions), 
+      <strong>ORCID</strong> (research profiles), and 
+      <strong>DOI-linked archival records</strong> (Zenodo, OSF, HAL).
+    </div>
+    
+    <p style="margin-top: 1rem;">
+      <strong>Repository:</strong> <a href="https://github.com/abdelkader-omran/trizel-monitor">github.com/abdelkader-omran/trizel-monitor</a>
+    </p>
+  </footer>
+
+  <script src="../../assets/js/trizel-monitor.js"></script>
+</body>
+</html>
