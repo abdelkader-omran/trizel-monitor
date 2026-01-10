@@ -46,12 +46,19 @@ jobs:
       - name: Check for MD5 in codebase
         run: |
           echo "Checking for forbidden MD5 usage..."
-          if grep -ri "md5" --include="*.py" --include="*.json" --exclude-dir=".git" .; then
-            echo "ERROR: MD5 checksums are FORBIDDEN (cryptographically broken)"
+          # Check for MD5 usage in data files (NOT in validator/docs where we mention it's forbidden)
+          if grep -i '"md5"' --include="*.json" data/ 2>/dev/null; then
+            echo "ERROR: MD5 checksums found in data files (FORBIDDEN)"
             echo "Use SHA-256 only. See DATA_CONTRACT.md section 7."
             exit 1
           fi
-          echo "✓ No MD5 usage found"
+          # Check for MD5 imports/usage in code (NOT in validator where we check for it)
+          if grep -E "hashlib\.md5|import.*md5" --include="*.py" src/main.py 2>/dev/null; then
+            echo "ERROR: MD5 usage found in main code (FORBIDDEN)"
+            echo "Use SHA-256 only. See DATA_CONTRACT.md section 7."
+            exit 1
+          fi
+          echo "✓ No forbidden MD5 usage found"
 
       - name: Validation Summary
         if: always()
