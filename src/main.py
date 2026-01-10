@@ -66,10 +66,13 @@ class SourceAgency:
     """
     Allowed authoritative agencies (STRICT):
     Only these agencies are recognized as official sources.
+    See config/agency_registry.json for complete registry.
     """
     NASA = "NASA"
     ESA = "ESA"
     JAXA = "JAXA"
+    CNSA = "CNSA"
+    ROSCOSMOS = "ROSCOSMOS"
     MPC = "MPC"
 
 

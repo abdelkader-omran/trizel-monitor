@@ -14,7 +14,10 @@ The project is built to operate with **zero daily manual intervention**, relying
   - **NASA** (National Aeronautics and Space Administration)
   - **ESA** (European Space Agency)
   - **JAXA** (Japan Aerospace Exploration Agency)
+  - **CNSA** (China National Space Administration) - Monitoring status
+  - **ROSCOSMOS** (Russian Federal Space Agency) - Monitoring status
   - **MPC** (Minor Planet Center - IAU)
+- RAW data download capability from agencies with public archives
 - Strict data classification (RAW_DATA, SNAPSHOT, DERIVED)
 - SHA-256 checksums for all data files (MD5 forbidden)
 - Centralized archival of observation timestamps and update signals
@@ -142,7 +145,22 @@ python src/validate_data.py
 ## Documentation
 
 - **[DATA_CONTRACT.md](DATA_CONTRACT.md)** - Authoritative data contract and schema specification
-- **[ISSUE_AUTHORITATIVE_DATA_GOVERNANCE.md](ISSUE_AUTHORITATIVE_DATA_GOVERNANCE.md)** - Complete governance framework (supersedes issues #1-6)
+- **[AUTHORITATIVE_RAW_DATA_GOVERNANCE.md](docs/governance/AUTHORITATIVE_RAW_DATA_GOVERNANCE.md)** - Complete RAW data and agency connectivity governance
+- **[AGENCY_CONNECTIVITY_STATUS.md](docs/status/AGENCY_CONNECTIVITY_STATUS.md)** - Current agency connectivity status
+- **[ISSUE_AUTHORITATIVE_DATA_GOVERNANCE.md](ISSUE_AUTHORITATIVE_DATA_GOVERNANCE.md)** - Historical governance framework
+
+---
+
+## Communication Policy
+
+**IMPORTANT:** TRIZEL-AI does not provide direct messaging.
+
+All communication is conducted through **verifiable channels only:**
+- **GitHub** (issues, pull requests, discussions)
+- **ORCID** (research profiles)
+- **DOI-linked archival records** (Zenodo, OSF, HAL)
+
+No other communication channels are authorized.
 
 ---
 

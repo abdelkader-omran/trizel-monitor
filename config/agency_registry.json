@@ -1,0 +1,178 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "description": "Authoritative registry of space agencies and their data endpoints for TRIZEL Monitor",
+  "last_updated": "2026-01-10T19:20:00Z",
+  "agencies": [
+    {
+      "agency_id": "NASA",
+      "name": "National Aeronautics and Space Administration",
+      "country": "United States",
+      "official_domains": [
+        "nasa.gov",
+        "jpl.nasa.gov"
+      ],
+      "raw_data_capability": true,
+      "status": "Active",
+      "status_notes": "Multiple public raw data archives available",
+      "endpoints": [
+        {
+          "endpoint_id": "jpl_sbdb_api",
+          "name": "JPL Small-Body Database API",
+          "url": "https://ssd-api.jpl.nasa.gov/sbdb.api",
+          "data_type": "SNAPSHOT",
+          "description": "Computed orbital elements and physical parameters (not archival raw data)",
+          "requires_auth": false,
+          "license_or_policy_ref": "https://www.jpl.nasa.gov/copyrights.php",
+          "delay_policy_default": "Real-time computed values, updated as orbital solutions are refined",
+          "download_mode": "API_JSON",
+          "verification_method": "CHECKSUM"
+        },
+        {
+          "endpoint_id": "pds_small_bodies",
+          "name": "Planetary Data System - Small Bodies Node",
+          "url": "https://pds-smallbodies.astro.umd.edu/",
+          "data_type": "RAW_DATA",
+          "description": "Archival mission data and observations",
+          "requires_auth": false,
+          "license_or_policy_ref": "https://pds.nasa.gov/datastandards/about/",
+          "delay_policy_default": "Archive release after mission data processing (typically 6-12 months post-observation)",
+          "download_mode": "DIRECT_FILE",
+          "verification_method": "CHECKSUM"
+        }
+      ]
+    },
+    {
+      "agency_id": "ESA",
+      "name": "European Space Agency",
+      "country": "Europe",
+      "official_domains": [
+        "esa.int",
+        "cosmos.esa.int"
+      ],
+      "raw_data_capability": true,
+      "status": "Active",
+      "status_notes": "Public archives available through ESA Science Archives",
+      "endpoints": [
+        {
+          "endpoint_id": "esa_archives",
+          "name": "ESA Science Archives",
+          "url": "https://archives.esac.esa.int/",
+          "data_type": "RAW_DATA",
+          "description": "Mission archives including Rosetta, Gaia, and other space science missions",
+          "requires_auth": false,
+          "license_or_policy_ref": "https://www.cosmos.esa.int/web/esdc/esdc-data-access-policy",
+          "delay_policy_default": "Proprietary period varies by mission (typically 6-12 months), then public release",
+          "download_mode": "DIRECT_FILE",
+          "verification_method": "CHECKSUM"
+        }
+      ]
+    },
+    {
+      "agency_id": "JAXA",
+      "name": "Japan Aerospace Exploration Agency",
+      "country": "Japan",
+      "official_domains": [
+        "jaxa.jp",
+        "darts.isas.jaxa.jp"
+      ],
+      "raw_data_capability": true,
+      "status": "Active",
+      "status_notes": "DARTS (Data ARchives and Transmission System) provides public access to mission data",
+      "endpoints": [
+        {
+          "endpoint_id": "jaxa_darts",
+          "name": "JAXA DARTS",
+          "url": "https://darts.isas.jaxa.jp/",
+          "data_type": "RAW_DATA",
+          "description": "Archive of JAXA space science mission data including Hayabusa missions",
+          "requires_auth": false,
+          "license_or_policy_ref": "https://darts.isas.jaxa.jp/about/policy.html",
+          "delay_policy_default": "Public release after mission data validation (typically 6-12 months post-observation)",
+          "download_mode": "DIRECT_FILE",
+          "verification_method": "CHECKSUM"
+        }
+      ]
+    },
+    {
+      "agency_id": "CNSA",
+      "name": "China National Space Administration",
+      "country": "China",
+      "official_domains": [
+        "cnsa.gov.cn"
+      ],
+      "raw_data_capability": false,
+      "status": "Monitoring",
+      "status_notes": "Limited public raw data access. Most datasets require formal data request and institutional credentials. Monitoring official announcements and catalog updates.",
+      "endpoints": [
+        {
+          "endpoint_id": "cnsa_announcements",
+          "name": "CNSA Official Announcements",
+          "url": "http://www.cnsa.gov.cn/english/",
+          "data_type": "CATALOG",
+          "description": "Official mission updates and announcements (monitoring only)",
+          "requires_auth": false,
+          "license_or_policy_ref": "Limited public data release policy",
+          "delay_policy_default": "Varies by mission; many datasets not publicly released or require formal request",
+          "download_mode": "HTML_INDEX",
+          "verification_method": "NONE"
+        }
+      ]
+    },
+    {
+      "agency_id": "ROSCOSMOS",
+      "name": "Russian Federal Space Agency",
+      "country": "Russia",
+      "official_domains": [
+        "roscosmos.ru"
+      ],
+      "raw_data_capability": false,
+      "status": "Monitoring",
+      "status_notes": "Limited public raw data infrastructure. Most archival data requires institutional access or formal agreements. Monitoring official channels for public releases.",
+      "endpoints": [
+        {
+          "endpoint_id": "roscosmos_official",
+          "name": "ROSCOSMOS Official Portal",
+          "url": "https://www.roscosmos.ru/",
+          "data_type": "CATALOG",
+          "description": "Official mission information and announcements (monitoring only)",
+          "requires_auth": false,
+          "license_or_policy_ref": "Limited public data release policy",
+          "delay_policy_default": "Varies by mission; most datasets not publicly accessible without institutional credentials",
+          "download_mode": "HTML_INDEX",
+          "verification_method": "NONE"
+        }
+      ]
+    },
+    {
+      "agency_id": "MPC",
+      "name": "Minor Planet Center (IAU)",
+      "country": "International",
+      "official_domains": [
+        "minorplanetcenter.net"
+      ],
+      "raw_data_capability": true,
+      "status": "Active",
+      "status_notes": "Public access to astrometric observations and orbital elements",
+      "endpoints": [
+        {
+          "endpoint_id": "mpc_observations",
+          "name": "MPC Observations Database",
+          "url": "https://www.minorplanetcenter.net/db_search",
+          "data_type": "RAW_DATA",
+          "description": "Astrometric observations submitted by observatories worldwide",
+          "requires_auth": false,
+          "license_or_policy_ref": "https://www.minorplanetcenter.net/iau/info/Astrometry.html",
+          "delay_policy_default": "Real-time publication of submitted observations after validation",
+          "download_mode": "DIRECT_FILE",
+          "verification_method": "CHECKSUM"
+        }
+      ]
+    }
+  ],
+  "status_definitions": {
+    "Active": "Publicly downloadable RAW datasets exist and are implemented in download system",
+    "Monitoring": "Agency exists but raw download not implemented or not publicly accessible without credentials",
+    "Limited": "Only catalogs/metadata or derived products available without authentication"
+  }
+}
