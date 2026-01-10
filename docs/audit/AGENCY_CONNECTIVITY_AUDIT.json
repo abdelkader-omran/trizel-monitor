@@ -1,0 +1,124 @@
+{
+  "audit_metadata": {
+    "generated_utc": "2026-01-10T19:23:29Z",
+    "generator": "scripts/generate_audit.py",
+    "version": "1.0.0"
+  },
+  "repository_status": {
+    "agency_registry_found": true,
+    "agency_registry_path": "config/agency_registry.json",
+    "data_contract_found": true
+  },
+  "agencies_present": [
+    {
+      "agency_id": "NASA",
+      "name": "National Aeronautics and Space Administration",
+      "status": "Active",
+      "raw_data_capability": true
+    },
+    {
+      "agency_id": "ESA",
+      "name": "European Space Agency",
+      "status": "Active",
+      "raw_data_capability": true
+    },
+    {
+      "agency_id": "JAXA",
+      "name": "Japan Aerospace Exploration Agency",
+      "status": "Active",
+      "raw_data_capability": true
+    },
+    {
+      "agency_id": "CNSA",
+      "name": "China National Space Administration",
+      "status": "Monitoring",
+      "raw_data_capability": false
+    },
+    {
+      "agency_id": "ROSCOSMOS",
+      "name": "Russian Federal Space Agency",
+      "status": "Monitoring",
+      "raw_data_capability": false
+    },
+    {
+      "agency_id": "MPC",
+      "name": "Minor Planet Center (IAU)",
+      "status": "Active",
+      "raw_data_capability": true
+    }
+  ],
+  "endpoints_present_count": {
+    "NASA": {
+      "total": 2,
+      "raw_data": 1,
+      "snapshot": 1,
+      "catalog": 0
+    },
+    "ESA": {
+      "total": 1,
+      "raw_data": 1,
+      "snapshot": 0,
+      "catalog": 0
+    },
+    "JAXA": {
+      "total": 1,
+      "raw_data": 1,
+      "snapshot": 0,
+      "catalog": 0
+    },
+    "CNSA": {
+      "total": 1,
+      "raw_data": 0,
+      "snapshot": 0,
+      "catalog": 1
+    },
+    "ROSCOSMOS": {
+      "total": 1,
+      "raw_data": 0,
+      "snapshot": 0,
+      "catalog": 1
+    },
+    "MPC": {
+      "total": 1,
+      "raw_data": 1,
+      "snapshot": 0,
+      "catalog": 0
+    }
+  },
+  "download_code_paths": [
+    "src/validate_data.py",
+    "src/main.py"
+  ],
+  "classification_rules_summary": {
+    "classifications": [
+      "RAW_DATA",
+      "SNAPSHOT",
+      "DERIVED"
+    ],
+    "raw_data_requirements": [
+      "Source is official agency (NASA, ESA, JAXA, MPC)",
+      "Direct download from archival systems (not API summaries)",
+      "Explicit provenance with source URL, checksum, and release policy"
+    ],
+    "snapshot_criteria": [
+      "API responses",
+      "Computed orbital elements",
+      "Real-time queries"
+    ],
+    "derived_criteria": [
+      "Processed data",
+      "Analysis results",
+      "Computed metrics"
+    ],
+    "contract_found": true
+  },
+  "coverage_analysis": {
+    "total_agencies": 6,
+    "active_agencies": 4,
+    "monitoring_agencies": 2,
+    "agencies_with_raw_capability": 4,
+    "japan_present": true,
+    "china_present": true,
+    "russia_present": true
+  }
+}

@@ -1,6 +1,7 @@
 # TRIZEL Monitor - File Manifest
 
-**Data Governance Version:** 2.0.0  
+**Version:** 3.0.0  
+**Data Governance Version:** 3.0.0  
 **Last Updated:** 2026-01-10
 
 ---

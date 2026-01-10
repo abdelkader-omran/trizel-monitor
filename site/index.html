@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="TRIZEL Monitor - Automated scientific monitoring system for tracking data from international space agencies. Zero interpretation, evidence-first approach.">
+  <title>TRIZEL Monitor - Scientific Data Monitoring Portal</title>
+  <link rel="stylesheet" href="../assets/css/trizel-monitor.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
+  <header role="banner">
+    <h1 class="site-title">TRIZEL Monitor</h1>
+    <p class="site-description">
+      Automated scientific monitoring system for tracking 3I/ATLAS data from international space agencies.
+      <br>
+      <strong>Zero interpretation • Evidence-first • Verifiable provenance only</strong>
+    </p>
+    
+    <nav role="navigation" aria-label="Main navigation">
+      <ul>
+        <li><a href="index.html" aria-current="page">Home</a></li>
+        <li><a href="status/index.html">Status</a></li>
+        <li><a href="agencies/index.html">Agencies</a></li>
+        <li><a href="raw/index.html">RAW Data</a></li>
+        <li><a href="snapshots/index.html">Snapshots</a></li>
+        <li><a href="policies/index.html">Policies</a></li>
+        <li><a href="sitemap/index.html">Sitemap</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content" role="main">
+    
+    <section class="section">
+      <h2 class="section-title">Overview</h2>
+      <p>
+        TRIZEL Monitor is an automated system designed to track, collect, and archive data related to 
+        the interstellar object <strong>3I/ATLAS</strong> from authoritative space agencies.
+      </p>
+      <p>
+        The system operates with <strong>zero daily manual intervention</strong>, relying on GitHub Actions 
+        to execute scheduled and on-demand monitoring workflows.
+      </p>
+      
+      <div class="card">
+        <div class="card-header">Core Principles</div>
+        <ul>
+          <li><strong>No interpretation:</strong> System does not modify, reinterpret, or alter official datasets</li>
+          <li><strong>Evidence-first:</strong> Pointers + verifiable provenance only</li>
+          <li><strong>Strict classification:</strong> Clear separation of RAW_DATA vs SNAPSHOT vs DERIVED</li>
+          <li><strong>Reproducible:</strong> All automation logic is auditable and reproducible</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Data Classification System</h2>
+      <p>All data is classified into exactly three categories with strict rules:</p>
+      
+      <table role="table">
+        <thead>
+          <tr>
+            <th scope="col">Classification</th>
+            <th scope="col">Visual</th>
+            <th scope="col">Description</th>
+            <th scope="col">Requirements</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-raw-data">RAW DATA</span></td>
+            <td>🟢 Green / ✓</td>
+            <td>Original archival files from official agencies</td>
+            <td>
+              Direct download only<br>
+              Official agency whitelist<br>
+              SHA-256 checksum required<br>
+              Provenance documented
+            </td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-snapshot">SNAPSHOT</span></td>
+            <td>🟠 Orange / ⚠</td>
+            <td>API responses, computed values, real-time queries</td>
+            <td>
+              <strong>NO SCIENTIFIC VALUE ALONE</strong><br>
+              Not archival files<br>
+              Computed orbital elements<br>
+              Warning label required
+            </td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-derived">DERIVED</span></td>
+            <td>🔵 Blue / →</td>
+            <td>Processed, analyzed, or transformed data</td>
+            <td>
+              Analysis results<br>
+              Computed metrics<br>
+              Visualizations
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <div class="alert alert-warning">
+        <strong>IMPORTANT:</strong> API responses (like JPL SBDB) are classified as SNAPSHOT, not RAW_DATA, 
+        because they contain computed orbital elements, not original archival files.
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Connected Agencies</h2>
+      <p>
+        TRIZEL Monitor tracks data from the following international space agencies. 
+        See <a href="agencies/index.html">Agency Registry</a> for complete details.
+      </p>
+      
+      <table role="table">
+        <thead>
+          <tr>
+            <th scope="col">Agency</th>
+            <th scope="col">Full Name</th>
+            <th scope="col">Status</th>
+            <th scope="col">Raw Data Access</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>NASA</strong></td>
+            <td>National Aeronautics and Space Administration</td>
+            <td><span class="badge badge-active">Active</span></td>
+            <td>✓ Public archives available</td>
+          </tr>
+          <tr>
+            <td><strong>ESA</strong></td>
+            <td>European Space Agency</td>
+            <td><span class="badge badge-active">Active</span></td>
+            <td>✓ Public archives available</td>
+          </tr>
+          <tr>
+            <td><strong>JAXA</strong></td>
+            <td>Japan Aerospace Exploration Agency</td>
+            <td><span class="badge badge-active">Active</span></td>
+            <td>✓ DARTS public access</td>
+          </tr>
+          <tr>
+            <td><strong>CNSA</strong></td>
+            <td>China National Space Administration</td>
+            <td><span class="badge badge-monitoring">Monitoring</span></td>
+            <td>✗ Limited public access (credentials required)</td>
+          </tr>
+          <tr>
+            <td><strong>ROSCOSMOS</strong></td>
+            <td>Russian Federal Space Agency</td>
+            <td><span class="badge badge-monitoring">Monitoring</span></td>
+            <td>✗ Limited public access (credentials required)</td>
+          </tr>
+          <tr>
+            <td><strong>MPC</strong></td>
+            <td>Minor Planet Center (IAU)</td>
+            <td><span class="badge badge-active">Active</span></td>
+            <td>✓ Public observations database</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Quick Links</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+        <div class="card">
+          <div class="card-header">Operational Status</div>
+          <p>Current system status, build information, and operational metrics.</p>
+          <a href="status/index.html" class="btn btn-primary">View Status →</a>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">RAW Data Catalog</div>
+          <p>Browse and download verified RAW data files with checksums and provenance.</p>
+          <a href="raw/index.html" class="btn btn-download">Browse RAW Data →</a>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">Snapshot Catalog</div>
+          <p>View API snapshots and computed values (not archival raw data).</p>
+          <a href="snapshots/index.html" class="btn">Browse Snapshots →</a>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">Governance</div>
+          <p>Review data governance framework, RAW data policies, and communication guidelines.</p>
+          <a href="policies/index.html" class="btn">View Policies →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Documentation</h2>
+      <ul>
+        <li><a href="https://github.com/abdelkader-omran/trizel-monitor/blob/main/DATA_CONTRACT.md">DATA_CONTRACT.md</a> - Authoritative data contract and schema specification</li>
+        <li><a href="https://github.com/abdelkader-omran/trizel-monitor/blob/main/docs/governance/AUTHORITATIVE_RAW_DATA_GOVERNANCE.md">AUTHORITATIVE_RAW_DATA_GOVERNANCE.md</a> - Complete RAW data governance</li>
+        <li><a href="https://github.com/abdelkader-omran/trizel-monitor/blob/main/docs/status/AGENCY_CONNECTIVITY_STATUS.md">AGENCY_CONNECTIVITY_STATUS.md</a> - Agency connectivity status</li>
+        <li><a href="https://github.com/abdelkader-omran/trizel-monitor">GitHub Repository</a> - Source code and issue tracker</li>
+      </ul>
+    </section>
+
+  </main>
+
+  <footer role="contentinfo">
+    <div class="communication-policy">
+      <strong>Communication Policy:</strong> 
+      TRIZEL-AI does not provide direct messaging. All communication is conducted through verifiable channels: 
+      <strong>GitHub</strong> (issues, pull requests, discussions), 
+      <strong>ORCID</strong> (research profiles), and 
+      <strong>DOI-linked archival records</strong> (Zenodo, OSF, HAL).
+    </div>
+    
+    <p style="margin-top: 1rem;">
+      <strong>License:</strong> This project is provided for scientific monitoring and research transparency purposes.
+      <br>
+      <strong>Repository:</strong> <a href="https://github.com/abdelkader-omran/trizel-monitor">github.com/abdelkader-omran/trizel-monitor</a>
+    </p>
+  </footer>
+
+  <script src="../assets/js/trizel-monitor.js"></script>
+</body>
+</html>

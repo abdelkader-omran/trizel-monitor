@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Governance and policies - TRIZEL Monitor">
+  <title>Policies - TRIZEL Monitor</title>
+  <link rel="stylesheet" href="../../assets/css/trizel-monitor.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
+  <header role="banner">
+    <h1 class="site-title">TRIZEL Monitor - Policies & Governance</h1>
+    <p class="site-description">
+      Data governance, RAW data policy, and communication guidelines
+    </p>
+    
+    <nav role="navigation" aria-label="Main navigation">
+      <ul>
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="../status/index.html">Status</a></li>
+        <li><a href="../agencies/index.html">Agencies</a></li>
+        <li><a href="../raw/index.html">RAW Data</a></li>
+        <li><a href="../snapshots/index.html">Snapshots</a></li>
+        <li><a href="../policies/index.html" aria-current="page">Policies</a></li>
+        <li><a href="../sitemap/index.html">Sitemap</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content" role="main">
+    
+    <section class="section">
+      <h2 class="section-title">Communication Policy</h2>
+      <div class="alert alert-info">
+        <strong>IMPORTANT:</strong> TRIZEL-AI does not provide direct messaging.
+      </div>
+      
+      <div class="card">
+        <p>All communication is conducted through <strong>verifiable channels ONLY:</strong></p>
+        <ul>
+          <li><strong>GitHub:</strong> Issues, pull requests, and discussions at <a href="https://github.com/abdelkader-omran/trizel-monitor">github.com/abdelkader-omran/trizel-monitor</a></li>
+          <li><strong>ORCID:</strong> Research profiles with verified identities</li>
+          <li><strong>DOI-linked archival records:</strong> Zenodo, OSF, HAL</li>
+        </ul>
+        
+        <p><strong>No other communication channels are authorized.</strong></p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">RAW Data Policy</h2>
+      <div class="card">
+        <h3>Classification Requirements</h3>
+        <p>Data MAY ONLY be classified as <span class="badge badge-raw-data">RAW DATA</span> if ALL conditions are met:</p>
+        <ol>
+          <li>Source is official agency from approved whitelist (NASA, ESA, JAXA, MPC)</li>
+          <li>Direct download from archival system (not API summary)</li>
+          <li>Verifiable provenance (source URL, checksum, policy reference)</li>
+          <li>SHA-256 checksum computed and stored</li>
+          <li>License or policy reference included</li>
+          <li>Data release delay policy explicitly stated</li>
+        </ol>
+        
+        <h3>Prohibited Classifications</h3>
+        <ul>
+          <li>API responses MUST NOT be classified as RAW_DATA</li>
+          <li>Computed values MUST NOT be classified as RAW_DATA</li>
+          <li>Real-time queries MUST be classified as SNAPSHOT</li>
+        </ul>
+        
+        <h3>Verification Requirement</h3>
+        <p>Before labeling any dataset "RAW_DATA", the system MUST provide verifiable proof:</p>
+        <ul>
+          <li>Exact official endpoint URL</li>
+          <li>Direct file download possible without private credentials</li>
+          <li>File stored under <code>data/raw/</code> with SHA-256</li>
+          <li>Sidecar <code>.meta.json</code> with provenance + license/policy + delay policy</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Data Governance Framework</h2>
+      <div class="card">
+        <p><strong>Version:</strong> 3.0.0</p>
+        <p><strong>Status:</strong> AUTHORITATIVE</p>
+        
+        <h3>Core Principles</h3>
+        <ul>
+          <li><strong>No interpretation:</strong> System does not modify, reinterpret, or alter official datasets</li>
+          <li><strong>Evidence-first:</strong> Pointers + verifiable provenance only</li>
+          <li><strong>Zero semantic drift:</strong> Strict definitions enforced</li>
+          <li><strong>Single metadata block:</strong> Exactly ONE <code>trizel_metadata</code> block at root</li>
+        </ul>
+        
+        <h3>Checksum Policy</h3>
+        <ul>
+          <li><strong>SHA-256:</strong> REQUIRED for all data files</li>
+          <li><strong>MD5:</strong> ABSOLUTELY FORBIDDEN (cryptographically broken)</li>
+          <li>CI MUST fail if MD5 is detected anywhere</li>
+        </ul>
+        
+        <h3>Visual Differentiation</h3>
+        <table role="table">
+          <thead>
+            <tr>
+              <th scope="col">Classification</th>
+              <th scope="col">Color</th>
+              <th scope="col">Icon</th>
+              <th scope="col">Label</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="badge badge-raw-data">RAW DATA</span></td>
+              <td>Green (🟢)</td>
+              <td>✓</td>
+              <td>RAW DATA</td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-snapshot">SNAPSHOT</span></td>
+              <td>Orange (🟠)</td>
+              <td>⚠</td>
+              <td>SNAPSHOT – NO SCIENTIFIC VALUE ALONE</td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-derived">DERIVED</span></td>
+              <td>Blue (🔵)</td>
+              <td>→</td>
+              <td>DERIVED DATA</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Agency Status Policy</h2>
+      <div class="card">
+        <h3><span class="badge badge-active">Active</span></h3>
+        <p>Publicly downloadable RAW datasets exist and are implemented in download system. No credentials required.</p>
+        
+        <h3><span class="badge badge-monitoring">Monitoring</span></h3>
+        <p>Agency exists but raw download not implemented OR not publicly accessible without credentials. System monitors official channels for updates.</p>
+        
+        <h3><span class="badge badge-limited">Limited</span></h3>
+        <p>Only catalogs/metadata or derived products available without authentication.</p>
+        
+        <p><strong>Note:</strong> CNSA and ROSCOSMOS are marked "Monitoring" because publicly accessible RAW data downloads are not available without institutional credentials. This is an accurate reflection of their data access policies.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Governance Documents</h2>
+      <div class="card">
+        <ul>
+          <li><a href="https://github.com/abdelkader-omran/trizel-monitor/blob/main/docs/governance/AUTHORITATIVE_RAW_DATA_GOVERNANCE.md">AUTHORITATIVE_RAW_DATA_GOVERNANCE.md</a> - Complete governance framework</li>
+          <li><a href="https://github.com/abdelkader-omran/trizel-monitor/blob/main/docs/governance/SUPERSESSION_NOTICE.md">SUPERSESSION_NOTICE.md</a> - Superseded items and migration notes</li>
+          <li><a href="https://github.com/abdelkader-omran/trizel-monitor/blob/main/DATA_CONTRACT.md">DATA_CONTRACT.md</a> - Authoritative data contract (v3.0.0)</li>
+          <li><a href="https://github.com/abdelkader-omran/trizel-monitor/blob/main/CHANGELOG.md">CHANGELOG.md</a> - Version history and breaking changes</li>
+          <li><a href="https://github.com/abdelkader-omran/trizel-monitor/blob/main/MANIFEST.md">MANIFEST.md</a> - File inventory</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">CI/CD Enforcement</h2>
+      <div class="card">
+        <p>All governance rules are enforced through automated CI validation:</p>
+        <ul>
+          <li>Single metadata block validation</li>
+          <li>RAW_DATA classification requirements</li>
+          <li>Agency whitelist enforcement</li>
+          <li>MD5 prohibition check</li>
+          <li>Visual attributes correctness</li>
+          <li>Required fields validation</li>
+        </ul>
+        
+        <p><strong>CI MUST fail if:</strong></p>
+        <ul>
+          <li>RAW_DATA claimed without meeting all requirements</li>
+          <li>MD5 checksum found anywhere</li>
+          <li>Multiple metadata blocks present</li>
+          <li>Unsupported agency used</li>
+          <li>Missing visual attributes</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Backward Compatibility</h2>
+      <div class="alert alert-warning">
+        <strong>Versions &lt; 3.0.0</strong> may contain snapshot data without explicit RAW_DATA guarantees.
+      </div>
+      
+      <p>For scientific reproducibility and verifiable raw data provenance, <strong>use v3.0.0 or later</strong>.</p>
+      
+      <p>Migration from v2.x to v3.0.0:</p>
+      <ul>
+        <li>Existing data files remain valid (backward compatible)</li>
+        <li>New RAW_DATA requirements apply to new data only</li>
+        <li>Agency registry now authoritative source of truth</li>
+        <li>UI provides verification interface for researchers</li>
+      </ul>
+    </section>
+
+  </main>
+
+  <footer role="contentinfo">
+    <div class="communication-policy">
+      <strong>Communication Policy:</strong> 
+      TRIZEL-AI does not provide direct messaging. All communication is conducted through verifiable channels: 
+      <strong>GitHub</strong> (issues, pull requests, discussions), 
+      <strong>ORCID</strong> (research profiles), and 
+      <strong>DOI-linked archival records</strong> (Zenodo, OSF, HAL).
+    </div>
+    
+    <p style="margin-top: 1rem;">
+      <strong>Repository:</strong> <a href="https://github.com/abdelkader-omran/trizel-monitor">github.com/abdelkader-omran/trizel-monitor</a>
+    </p>
+  </footer>
+
+  <script src="../../assets/js/trizel-monitor.js"></script>
+</body>
+</html>

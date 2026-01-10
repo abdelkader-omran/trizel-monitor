@@ -29,7 +29,7 @@ from pathlib import Path
 
 # Allowed values (from data contract)
 ALLOWED_CLASSIFICATIONS = {"RAW_DATA", "SNAPSHOT", "DERIVED"}
-ALLOWED_AGENCIES = {"NASA", "ESA", "JAXA", "MPC"}
+ALLOWED_AGENCIES = {"NASA", "ESA", "JAXA", "CNSA", "ROSCOSMOS", "MPC"}
 ALLOWED_SOURCE_TYPES = {"api", "archive", "download"}
 FORBIDDEN_CHECKSUMS = {"md5", "MD5"}
 
