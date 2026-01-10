@@ -39,6 +39,13 @@ jobs:
           echo "TRIZEL_EXIT_CODE=$code" >> "$GITHUB_ENV"
           exit 0
 
+      - name: Validate data integrity
+        if: ${{ env.TRIZEL_EXIT_CODE == '0' || env.TRIZEL_EXIT_CODE == '2' }}
+        shell: bash
+        run: |
+          echo "Running data integrity validation..."
+          python scripts/validate_data_integrity.py
+
       - name: Enforce exit-code contract
         shell: bash
         run: |

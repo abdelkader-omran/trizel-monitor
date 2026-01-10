@@ -1,0 +1,149 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/abdelkader-omran/trizel-monitor/schema/data_metadata_schema.json",
+  "title": "TRIZEL Monitor Data Metadata Schema",
+  "description": "Mandatory metadata schema for raw data archival integrity",
+  "type": "object",
+  "required": [
+    "metadata",
+    "data_classification",
+    "sbdb_data",
+    "platforms_registry"
+  ],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "required": [
+        "project",
+        "pipeline",
+        "query_designation",
+        "retrieved_utc"
+      ],
+      "properties": {
+        "project": {
+          "type": "string"
+        },
+        "pipeline": {
+          "type": "string"
+        },
+        "query_designation": {
+          "type": "string"
+        },
+        "resolved_designation": {
+          "type": ["string", "null"]
+        },
+        "retrieved_utc": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "data_classification": {
+      "type": "object",
+      "required": [
+        "data_class",
+        "source_agency",
+        "agency_endpoint",
+        "license",
+        "delay_policy",
+        "checksum",
+        "retrieval_timestamp",
+        "visual_attributes"
+      ],
+      "properties": {
+        "data_class": {
+          "type": "string",
+          "enum": ["RAW_DATA", "SNAPSHOT", "DERIVED"]
+        },
+        "source_agency": {
+          "type": "string",
+          "enum": ["NASA", "ESA", "CNSA", "Roscosmos", "JAXA", "MPC"]
+        },
+        "agency_endpoint": {
+          "type": "string",
+          "format": "uri"
+        },
+        "license": {
+          "type": "string"
+        },
+        "delay_policy": {
+          "type": "object",
+          "required": ["raw_release_delay", "default_assumption"],
+          "properties": {
+            "raw_release_delay": {
+              "type": "boolean"
+            },
+            "is_real_time_claim": {
+              "type": "boolean"
+            },
+            "default_assumption": {
+              "type": "string"
+            },
+            "note": {
+              "type": "string"
+            }
+          }
+        },
+        "checksum": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "retrieval_timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "target_object": {
+          "type": "string"
+        },
+        "download_url": {
+          "type": ["string", "null"],
+          "format": "uri"
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "source_type": {
+              "type": "string"
+            },
+            "retrieval_method": {
+              "type": "string"
+            },
+            "verification_status": {
+              "type": "string"
+            }
+          }
+        },
+        "visual_attributes": {
+          "type": "object",
+          "required": ["label", "color", "badge", "icon", "resolution_flag"],
+          "properties": {
+            "label": {
+              "type": "string"
+            },
+            "color": {
+              "type": "string"
+            },
+            "badge": {
+              "type": "string"
+            },
+            "icon": {
+              "type": "string"
+            },
+            "resolution_flag": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "sbdb_data": {
+      "type": "object"
+    },
+    "sbdb_error": {
+      "type": ["object", "null"]
+    },
+    "platforms_registry": {
+      "type": "object"
+    }
+  }
+}

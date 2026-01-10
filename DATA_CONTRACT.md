@@ -77,12 +77,42 @@ The system MAY reference additional official platforms **only as registry entrie
 Each execution of the pipeline SHALL attempt to produce **three artifacts**:
 
 1. **Timestamped Snapshot**
-2. data/official_snapshot__<UTC_TIMESTAMP>.json
- 2. **Latest Snapshot**
+   data/official_snapshot_<OBJECT>_<UTC_TIMESTAMP>.json
+2. **Latest Snapshot**
    data/official_snapshot_latest.json
- 3. **Platforms Registry Snapshot**
-  data/platforms_registry_<UTC_TIMESTAMP>.json
-  Failure to write any artifact SHALL be treated as a fatal error.
+3. **Platforms Registry Snapshot**
+   data/platforms_registry_<UTC_TIMESTAMP>.json
+
+Failure to write any artifact SHALL be treated as a fatal error.
+
+### 5.1 Data Classification (NEW - Archival Integrity)
+
+Each artifact SHALL contain a `data_classification` object with mandatory fields:
+
+- `data_class` (enum): RAW_DATA | SNAPSHOT | DERIVED
+- `source_agency` (string): NASA | ESA | CNSA | Roscosmos | JAXA | MPC
+- `agency_endpoint` (URI): Official endpoint URL
+- `license` (string): Data license information
+- `delay_policy` (object): Release timing metadata
+- `checksum` (string): SHA256 hash for integrity
+- `retrieval_timestamp` (ISO-8601): Acquisition time
+- `target_object` (string): Observed object designation
+- `download_url` (URI | null): Direct download link (required for RAW_DATA)
+- `provenance` (object): Traceability metadata (required for RAW_DATA)
+- `visual_attributes` (object): UI rendering metadata
+
+### 5.2 Scientific Classification Rule
+
+Data from SBDB API is classified as **SNAPSHOT** (not RAW_DATA) because:
+- SBDB provides computed orbital elements and physical parameters
+- These are processed/aggregated values, not raw observational measurements
+- Raw observations would come from telescopes/missions directly
+
+RAW_DATA classification requires:
+- Direct from official agency raw data endpoint
+- Independently downloadable
+- Verifiable provenance chain
+- Not derived or computed
 
 ---
 
@@ -92,37 +122,59 @@ Each snapshot JSON file SHALL conform to the following top-level schema:
 
 ```json
 {
-"metadata": { ... },
-"platforms_registry": { ... },
-"sbdb_data": { ... },
-"sbdb_error": null | { ... }
+  "metadata": { ... },
+  "data_classification": { ... },
+  "platforms_registry": { ... },
+  "agency_endpoints": { ... },
+  "sbdb_data": { ... },
+  "sbdb_error": null | { ... }
 }
-6.1 Metadata Object
+```
+
+### 6.1 Metadata Object
 
 The metadata object SHALL contain:
-	•	project (string)
-	•	pipeline (string)
-	•	source (string)
-	•	requested_designation (string)
-	•	resolved_designation (string | null)
-	•	retrieved_utc (ISO-8601 UTC string)
-	•	run_id (string | null)
-	•	retrieval_parameters (object)
-	•	integrity (object)
+- `project` (string)
+- `pipeline` (string)
+- `source` (string)
+- `requested_designation` (string)
+- `resolved_designation` (string | null)
+- `retrieved_utc` (ISO-8601 UTC string)
+- `run_id` (string | null)
+- `retrieval_parameters` (object)
+- `integrity` (object)
 
-6.2 sbdb_data
-	•	SHALL always be a JSON object.
-	•	SHALL be empty {} if no valid payload was retrieved.
-	•	SHALL contain the raw SBDB payload when available.
-	•	SHALL NOT be null.
+### 6.2 Data Classification Object (NEW)
 
-6.3 sbdb_error
-	•	SHALL be null on successful retrieval.
-	•	SHALL be an object when any error occurs.
-	•	SHALL include at minimum:
-	•	type
-	•	message
-7. Error Classification Contract
+The data_classification object SHALL contain:
+- `data_class` (enum): Classification type
+- `source_agency` (string): Trusted agency name
+- `agency_endpoint` (URI): Official endpoint
+- `license` (string): License information
+- `delay_policy` (object): Release timing
+- `checksum` (string): SHA256 integrity hash
+- `retrieval_timestamp` (ISO-8601): Acquisition time
+- `target_object` (string): Object designation
+- `download_url` (URI | null): Download link
+- `provenance` (object): Traceability chain
+- `visual_attributes` (object): UI metadata
+
+### ### 6.3 sbdb_data
+- SHALL always be a JSON object.
+- SHALL be empty {} if no valid payload was retrieved.
+- SHALL contain the raw SBDB payload when available.
+- SHALL NOT be null.
+
+### 6.4 sbdb_error
+- SHALL be null on successful retrieval.
+- SHALL be an object when any error occurs.
+- SHALL include at minimum:
+  - `type`
+  - `message`
+
+---
+
+## 7. Error Classification Contract
 
 The following error types are defined:
 Error Type

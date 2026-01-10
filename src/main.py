@@ -5,6 +5,16 @@ import requests
 from datetime import datetime
 from typing import Any, Dict, Optional
 
+# Import data classification framework
+from data_classification import (
+    DataClass,
+    DataMetadata,
+    compute_checksum,
+    classify_data_source,
+    create_default_delay_policy,
+    AGENCY_ENDPOINTS,
+)
+
 
 # ============================================================
 # TRIZEL Monitor — Official Data Acquisition (Auto DZ ACT ready)
@@ -194,14 +204,45 @@ def main() -> None:
             "has_error": sbdb_error is not None,
         },
     }
+    
+    # 2b) Build data classification metadata (NEW: Raw Data Archival Integrity)
+    # Classify data source - SBDB API returns computed snapshots, not raw observations
+    data_class = classify_data_source(SBDB_API_URL, "NASA")
+    
+    # Create comprehensive data classification metadata
+    data_classification_metadata = DataMetadata(
+        data_class=data_class,
+        source_agency="NASA",
+        agency_endpoint=SBDB_API_URL,
+        license_info="Public Domain (NASA data policy: https://www.nasa.gov/nasa-data-and-information-policy/)",
+        delay_policy=create_default_delay_policy(is_real_time=False),
+        retrieval_timestamp=retrieved_utc,
+        target_object=TARGET_OBJECT,
+        checksum=None,  # Will be computed after building full payload
+        download_url=None if data_class == DataClass.SNAPSHOT else SBDB_API_URL,
+        provenance={
+            "source_type": "api_snapshot",
+            "retrieval_method": "http_get",
+            "api_version": "sbdb.api",
+            "verification_status": "snapshot_derivative",
+            "note": "SBDB provides computed orbital elements and physical parameters, not raw observational data. This is a SNAPSHOT of processed information.",
+        },
+    )
 
     # 3) Full output payload (version-lock snapshot)
     output = {
         "metadata": metadata,
+        "data_classification": data_classification_metadata.to_dict(),
         "platforms_registry": global_platforms_registry(),
+        "agency_endpoints": AGENCY_ENDPOINTS,
         "sbdb_data": sbdb_payload,
         "sbdb_error": sbdb_error,
     }
+    
+    # 3b) Compute and update checksum after building full output
+    checksum = compute_checksum(output)
+    data_classification_metadata.checksum = checksum
+    output["data_classification"]["checksum"] = checksum
 
     # 4) Filenames
     slug = safe_slug(TARGET_OBJECT) or "unknown_object"
