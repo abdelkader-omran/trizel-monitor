@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [3.1.0] - 2026-03-26
+
+### Added — Handoff Codification (monitor → DAILY)
+
+- `.github/workflows/daily.yml`: Added "Dispatch to DAILY preservation layer" step
+  - Fires a `repository_dispatch` event (`trizel-monitor-snapshot`) to
+    `AUTO-DZ-ACT-3I-ATLAS-DAILY` after each successful or diagnostic run
+  - Payload includes: `run_date`, `retrieved_utc`, `exit_code`, `source_repo`,
+    `snapshot_latest`
+  - Requires `DAILY_DISPATCH_TOKEN` secret (PAT with `repo` scope); fails hard
+    if absent so the gap is never silently swallowed
+- `docs/HANDOFF_MONITOR_TO_DAILY.md`: New authoritative handoff document
+  - Defines the monitor → DAILY mechanism end-to-end
+  - Documents secret requirements and DAILY receiving workflow requirements
+  - Contains explicit re-run admissibility statement for 2026-03-26
+
+### Fixed
+
+- Closed the structural handoff gap identified in
+  `docs/TRIZEL_REPOSITORY_ROLE_MAP_CORRECTED_2026-03-26.md` §8.4: `trizel-monitor`
+  previously committed SNAPSHOT data locally and stopped; it now dispatches a
+  governed trigger to `AUTO-DZ-ACT-3I-ATLAS-DAILY` as the next step in the
+  preservation chain.
+
+---
+
 ## [3.0.0] - 2026-01-10
 
 ### BREAKING CHANGES

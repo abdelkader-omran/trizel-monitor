@@ -34,6 +34,10 @@ jobs:
         shell: bash
         run: |
           set +e
+          TRIZEL_RETRIEVED_UTC=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          TRIZEL_RUN_DATE=$(date -u +%Y-%m-%d)
+          echo "TRIZEL_RETRIEVED_UTC=$TRIZEL_RETRIEVED_UTC" >> "$GITHUB_ENV"
+          echo "TRIZEL_RUN_DATE=$TRIZEL_RUN_DATE" >> "$GITHUB_ENV"
           python src/main.py
           code=$?
           echo "TRIZEL_EXIT_CODE=$code" >> "$GITHUB_ENV"
@@ -66,3 +70,48 @@ jobs:
           # Avoid non-fast-forward failures if main advanced since checkout
           git pull --rebase origin main
           git push origin HEAD:main
+
+      - name: Dispatch to DAILY preservation layer
+        if: ${{ env.TRIZEL_EXIT_CODE == '0' || env.TRIZEL_EXIT_CODE == '2' }}
+        shell: bash
+        env:
+          DAILY_DISPATCH_TOKEN: ${{ secrets.DAILY_DISPATCH_TOKEN }}
+        run: |
+          # HANDOFF: trizel-monitor → AUTO-DZ-ACT-3I-ATLAS-DAILY
+          #
+          # This step implements the governed handoff defined in:
+          #   docs/HANDOFF_MONITOR_TO_DAILY.md
+          #   docs/TRIZEL_REPOSITORY_ROLE_MAP_CORRECTED_2026-03-26.md §8.4
+          #
+          # DAILY_DISPATCH_TOKEN must be a PAT with repo scope for the
+          # abdelkader-omran/AUTO-DZ-ACT-3I-ATLAS-DAILY repository,
+          # stored as a repository secret in trizel-monitor.
+          #
+          # If the secret is absent, preservation is blocked and a clear
+          # error is emitted so the gap is not silently swallowed.
+
+          if [ -z "$DAILY_DISPATCH_TOKEN" ]; then
+            echo "ERROR: DAILY_DISPATCH_TOKEN secret is not configured."
+            echo "The handoff to AUTO-DZ-ACT-3I-ATLAS-DAILY cannot proceed."
+            echo "Set DAILY_DISPATCH_TOKEN (PAT with repo scope) as a repository secret."
+            echo "See docs/HANDOFF_MONITOR_TO_DAILY.md for full setup instructions."
+            exit 1
+          fi
+
+          HTTP_STATUS=$(curl -s -o /tmp/dispatch_response.json -w "%{http_code}" \
+            -X POST \
+            -H "Authorization: token $DAILY_DISPATCH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Content-Type: application/json" \
+            https://api.github.com/repos/abdelkader-omran/AUTO-DZ-ACT-3I-ATLAS-DAILY/dispatches \
+            -d "{\"event_type\":\"trizel-monitor-snapshot\",\"client_payload\":{\"run_date\":\"$TRIZEL_RUN_DATE\",\"retrieved_utc\":\"$TRIZEL_RETRIEVED_UTC\",\"exit_code\":\"$TRIZEL_EXIT_CODE\",\"source_repo\":\"abdelkader-omran/trizel-monitor\",\"snapshot_latest\":\"data/snapshot_3I_ATLAS_latest.json\"}}")
+
+          if [ "$HTTP_STATUS" -eq 204 ]; then
+            echo "Handoff dispatch accepted by AUTO-DZ-ACT-3I-ATLAS-DAILY (HTTP 204)"
+            echo "Run date: $TRIZEL_RUN_DATE"
+            echo "Snapshot reference: data/snapshot_3I_ATLAS_latest.json"
+          else
+            echo "ERROR: Dispatch to AUTO-DZ-ACT-3I-ATLAS-DAILY failed (HTTP $HTTP_STATUS)"
+            cat /tmp/dispatch_response.json
+            exit 1
+          fi
