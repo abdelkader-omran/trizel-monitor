@@ -48,3 +48,6 @@ htmlcov/
 
 # Documentation builds
 docs/_build/
+
+# Node
+node_modules/
